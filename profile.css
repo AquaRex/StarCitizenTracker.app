@@ -1,0 +1,255 @@
+/* Profile Page Styles */
+
+.nav-link {
+    color: #18140c;
+    text-decoration: none;
+    font-size: 0.75rem;
+    letter-spacing: 2px;
+}
+
+.login-link {
+    color: #18140c;
+    text-decoration: none;
+    font-size: 0.75rem;
+    letter-spacing: 2px;
+    padding: 8px 15px;
+    border: 2px solid #18140c;
+    transition: all 0.2s;
+}
+
+.login-link:hover {
+    background: #18140c;
+    color: #aba9a2;
+}
+
+.profile-header {
+    border: 2px solid #18140c;
+    padding: 40px;
+    margin-bottom: 40px;
+    text-align: center;
+}
+
+.player-name {
+    font-size: 1.5rem;
+    letter-spacing: 4px;
+    font-weight: 300;
+    color: #d05252;
+    margin-bottom: 15px;
+}
+
+.profile-status {
+    font-size: 0.7rem;
+    letter-spacing: 3px;
+    opacity: 0.6;
+    color: #18140c;
+}
+
+.profile-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    border: 2px solid #18140c;
+    margin-bottom: 40px;
+}
+
+.stat-card {
+    padding: 40px 20px;
+    text-align: center;
+    border-right: 2px solid #18140c;
+    transition: all 0.2s;
+}
+
+.stat-card:last-child {
+    border-right: none;
+}
+
+.stat-card:hover {
+    background: #18140c;
+    color: #aba9a2;
+}
+
+.stat-number {
+    font-size: 1.8rem;
+    font-weight: 300;
+    letter-spacing: 2px;
+    margin-bottom: 15px;
+    color: #18140c;
+}
+
+.stat-card:hover .stat-number {
+    color: #aba9a2;
+}
+
+.stat-label {
+    font-size: 0.65rem;
+    letter-spacing: 3px;
+    opacity: 0.6;
+    color: #18140c;
+}
+
+.stat-card:hover .stat-label {
+    color: #aba9a2;
+}
+
+.recent-activity {
+    border: 2px solid #18140c;
+}
+
+.section-header {
+    padding: 25px 40px;
+    border-bottom: 2px solid #18140c;
+}
+
+.section-header h2 {
+    font-size: 0.9rem;
+    font-weight: 300;
+    letter-spacing: 4px;
+    color: #18140c;
+}
+
+.activity-list {
+    min-height: 200px;
+}
+
+.activity-item {
+    padding: 25px 40px;
+    border-bottom: 2px solid #18140c;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.2s;
+}
+
+.activity-item:last-child {
+    border-bottom: none;
+}
+
+.activity-item:hover {
+    background: #18140c;
+    color: #aba9a2;
+}
+
+.activity-details {
+    flex: 1;
+}
+
+.activity-action {
+    font-size: 0.85rem;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+    color: #18140c;
+}
+
+.activity-item:hover .activity-action {
+    color: #aba9a2;
+}
+
+.activity-meta {
+    font-size: 0.7rem;
+    letter-spacing: 1px;
+    opacity: 0.6;
+    color: #18140c;
+}
+
+.activity-item:hover .activity-meta {
+    color: #aba9a2;
+}
+
+.loading-message {
+    padding: 60px 40px;
+    text-align: center;
+    font-size: 0.8rem;
+    letter-spacing: 2px;
+    opacity: 0.6;
+    color: #18140c;
+}
+
+.error-message {
+    border: 2px solid #18140c;
+    padding: 60px 40px;
+    text-align: center;
+}
+
+.error-message h2 {
+    font-size: 1.2rem;
+    letter-spacing: 3px;
+    font-weight: 300;
+    margin-bottom: 20px;
+    color: #18140c;
+}
+
+.error-message p {
+    font-size: 0.85rem;
+    letter-spacing: 1px;
+    opacity: 0.7;
+    margin-bottom: 30px;
+    color: #18140c;
+}
+
+.back-link {
+    color: #18140c;
+    text-decoration: none;
+    font-size: 0.75rem;
+    letter-spacing: 2px;
+    padding: 10px 20px;
+    border: 2px solid #18140c;
+    transition: all 0.2s;
+}
+
+.back-link:hover {
+    background: #18140c;
+    color: #aba9a2;
+}
+
+/* Dark Mode */
+body.dark-mode .nav-link,
+body.dark-mode .profile-status,
+body.dark-mode .stat-number,
+body.dark-mode .stat-label,
+body.dark-mode .section-header h2,
+body.dark-mode .activity-action,
+body.dark-mode .activity-meta,
+body.dark-mode .loading-message,
+body.dark-mode .error-message h2,
+body.dark-mode .error-message p {
+    color: #aba9a2;
+}
+
+body.dark-mode .login-link,
+body.dark-mode .back-link {
+    border-color: #aba9a2;
+    color: #aba9a2;
+}
+
+body.dark-mode .login-link:hover,
+body.dark-mode .back-link:hover {
+    background: #aba9a2;
+    color: #18140c;
+}
+
+body.dark-mode .profile-header,
+body.dark-mode .profile-stats,
+body.dark-mode .recent-activity,
+body.dark-mode .error-message,
+body.dark-mode .section-header,
+body.dark-mode .activity-item,
+body.dark-mode .stat-card {
+    border-color: #aba9a2;
+}
+
+body.dark-mode .stat-card:hover,
+body.dark-mode .activity-item:hover {
+    background: #aba9a2;
+    color: #18140c;
+}
+
+body.dark-mode .stat-card:hover .stat-number,
+body.dark-mode .stat-card:hover .stat-label,
+body.dark-mode .activity-item:hover .activity-action,
+body.dark-mode .activity-item:hover .activity-meta {
+    color: #18140c;
+}
+
+/* Keep player name red in both modes */
+body.dark-mode .player-name {
+    color: #d05252;
+}

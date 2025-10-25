@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LOGIN - STAR TRACKER</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="auth.css">
+</head>
+<body>
+    <div class="main-container">
+        <!-- Header -->
+        <header class="header">
+            <h1>STAR CITIZEN TRACKER</h1>
+        </header>
+
+        <!-- Auth Container -->
+        <div class="auth-container">
+            <div class="auth-header">
+                <h2>LOGIN</h2>
+            </div>
+
+            <form class="auth-form" id="loginForm" onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label for="username" class="form-label">USERNAME</label>
+                    <input 
+                        type="text" 
+                        id="username" 
+                        name="username" 
+                        class="form-input" 
+                        placeholder="ENTER USERNAME"
+                        autocomplete="username"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="password" class="form-label">PASSWORD</label>
+                    <input 
+                        type="password" 
+                        id="password" 
+                        name="password" 
+                        class="form-input" 
+                        placeholder="ENTER PASSWORD"
+                        autocomplete="current-password"
+                        required
+                    >
+                </div>
+
+                <div class="form-message" id="formMessage"></div>
+
+                <button type="submit" class="auth-button" id="loginButton">
+                    <span id="buttonText">LOGIN</span>
+                </button>
+            </form>
+
+            <div class="auth-footer">
+                <span class="auth-footer-text">DON'T HAVE AN ACCOUNT?</span>
+                <a href="register.html" class="auth-link">REGISTER HERE</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="config/api.js"></script>
+    <script src="auth.js"></script>
+</body>
+</html>

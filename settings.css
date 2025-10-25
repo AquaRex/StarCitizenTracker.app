@@ -1,0 +1,313 @@
+/* Settings Page Styles */
+
+.back-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    color: #18140c;
+    text-decoration: none;
+    font-size: 0.75rem;
+    letter-spacing: 2px;
+    transition: all 0.2s;
+    padding: 8px 15px;
+    border: 2px solid #18140c;
+}
+
+.back-btn:hover {
+    background: #18140c;
+    color: #aba9a2;
+}
+
+.back-btn svg {
+    flex-shrink: 0;
+}
+
+.page-title {
+    font-size: 0.9rem;
+    letter-spacing: 4px;
+    font-weight: 300;
+    color: #18140c;
+    margin-left: 30px;
+}
+
+.settings-section {
+    border: 2px solid #18140c;
+    margin: 0 0 40px 0;
+}
+
+.settings-section:first-of-type {
+    margin-top: 20px;
+}
+
+.settings-section:last-of-type {
+    margin-bottom: 20px;
+}
+
+.settings-actions {
+    margin-top: 0;
+    margin-bottom: 20px;
+}
+
+.section-header {
+    padding: 25px 40px;
+    border-bottom: 2px solid #18140c;
+}
+
+.section-header h2 {
+    font-size: 0.9rem;
+    font-weight: 300;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: #18140c;
+}
+
+.section-content {
+    padding: 0;
+}
+
+.setting-item {
+    padding: 30px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid #18140c;
+    transition: all 0.2s;
+}
+
+.setting-item:last-child {
+    border-bottom: none;
+}
+
+.setting-item:hover {
+    background: #18140c;
+    color: #aba9a2;
+}
+
+.setting-info {
+    flex: 1;
+}
+
+.setting-label {
+    font-size: 0.7rem;
+    letter-spacing: 3px;
+    opacity: 0.5;
+    margin-bottom: 8px;
+    color: #18140c;
+}
+
+.setting-item:hover .setting-label {
+    color: #aba9a2;
+}
+
+.setting-value {
+    font-size: 0.9rem;
+    letter-spacing: 1.5px;
+    font-weight: 400;
+    color: #18140c;
+}
+
+.setting-item:hover .setting-value {
+    color: #aba9a2;
+}
+
+.setting-description {
+    font-size: 0.75rem;
+    letter-spacing: 1px;
+    opacity: 0.7;
+    margin-top: 8px;
+    color: #18140c;
+}
+
+.setting-item:hover .setting-description {
+    color: #aba9a2;
+}
+
+/* Toggle Switch */
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 30px;
+    flex-shrink: 0;
+}
+
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.toggle-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: transparent;
+    border: 2px solid #18140c;
+    transition: 0.3s;
+}
+
+.setting-item:hover .toggle-slider {
+    border-color: #aba9a2;
+}
+
+.toggle-slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 4px;
+    bottom: 4px;
+    background-color: #18140c;
+    transition: 0.3s;
+}
+
+.setting-item:hover .toggle-slider:before {
+    background-color: #aba9a2;
+}
+
+.toggle-switch input:checked + .toggle-slider {
+    background-color: #18140c;
+}
+
+.setting-item:hover .toggle-switch input:checked + .toggle-slider {
+    background-color: #aba9a2;
+}
+
+.toggle-switch input:checked + .toggle-slider:before {
+    transform: translateX(30px);
+    background-color: #aba9a2;
+}
+
+.setting-item:hover .toggle-switch input:checked + .toggle-slider:before {
+    background-color: #18140c;
+}
+
+/* Settings Actions */
+.settings-actions {
+    text-align: center;
+    margin-bottom: 0;
+}
+
+.save-btn {
+    padding: 25px 60px;
+    background: #18140c;
+    border: 2px solid #18140c;
+    font-size: 0.85rem;
+    font-weight: 300;
+    letter-spacing: 3px;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: #aba9a2;
+    text-transform: uppercase;
+    font-family: Arial, sans-serif;
+}
+
+.save-btn:hover {
+    background: transparent;
+    color: #18140c;
+}
+
+.save-message {
+    margin-top: 20px;
+    font-size: 0.8rem;
+    letter-spacing: 2px;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.save-message.show {
+    opacity: 1;
+}
+
+.save-message.success {
+    color: #18140c;
+}
+
+.save-message.error {
+    color: #d05252;
+}
+
+/* Dark Mode for Settings */
+body.dark-mode .back-btn {
+    border-color: #aba9a2;
+    color: #aba9a2;
+}
+
+body.dark-mode .back-btn:hover {
+    background: #aba9a2;
+    color: #18140c;
+}
+
+body.dark-mode .page-title,
+body.dark-mode .section-header h2,
+body.dark-mode .setting-label,
+body.dark-mode .setting-value,
+body.dark-mode .setting-description {
+    color: #aba9a2;
+}
+
+body.dark-mode .settings-section {
+    border-color: #aba9a2;
+}
+
+body.dark-mode .section-header,
+body.dark-mode .setting-item {
+    border-color: #aba9a2;
+}
+
+body.dark-mode .setting-item:hover {
+    background: #aba9a2;
+    color: #18140c;
+}
+
+body.dark-mode .setting-item:hover .setting-label,
+body.dark-mode .setting-item:hover .setting-value,
+body.dark-mode .setting-item:hover .setting-description {
+    color: #18140c;
+}
+
+body.dark-mode .toggle-slider {
+    border-color: #aba9a2;
+}
+
+body.dark-mode .toggle-slider:before {
+    background-color: #aba9a2;
+}
+
+body.dark-mode .setting-item:hover .toggle-slider {
+    border-color: #18140c;
+}
+
+body.dark-mode .setting-item:hover .toggle-slider:before {
+    background-color: #18140c;
+}
+
+body.dark-mode .toggle-switch input:checked + .toggle-slider {
+    background-color: #aba9a2;
+}
+
+body.dark-mode .setting-item:hover .toggle-switch input:checked + .toggle-slider {
+    background-color: #18140c;
+}
+
+body.dark-mode .toggle-switch input:checked + .toggle-slider:before {
+    background-color: #18140c;
+}
+
+body.dark-mode .setting-item:hover .toggle-switch input:checked + .toggle-slider:before {
+    background-color: #aba9a2;
+}
+
+body.dark-mode .save-btn {
+    background: #aba9a2;
+    border-color: #aba9a2;
+    color: #18140c;
+}
+
+body.dark-mode .save-btn:hover {
+    background: transparent;
+    color: #aba9a2;
+}

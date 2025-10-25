@@ -1,0 +1,74 @@
+# Sensitive Configuration Files
+config/api-local.js
+config/api-production.js
+config/secrets.js
+
+# Environment Files
+.env
+.env.local
+.env.development
+.env.production
+*.env
+
+# API Keys and Secrets
+**/secrets/**
+**/keys/**
+**/*secret*
+**/*key*
+**/*token*
+
+# Local Development Files
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS Files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE Files
+.vscode/settings.json
+.vscode/launch.json
+.vscode/tasks.json
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs
+logs
+*.log
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory used by tools like istanbul
+coverage/
+
+# Dependency directories
+node_modules/
+jspm_packages/
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Build outputs
+dist/
+build/
+out/
+
+# Temporary folders
+tmp/
+temp/

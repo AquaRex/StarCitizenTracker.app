@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SETTINGS - STAR TRACKER</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="settings.css">
+</head>
+<body>
+    <div class="main-container">
+        <!-- Top Navigation Bar -->
+        <nav class="top-nav">
+            <div class="nav-logo">
+                <a href="index.html" class="back-btn">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="19" y1="12" x2="5" y2="12"></line>
+                        <polyline points="12 19 5 12 12 5"></polyline>
+                    </svg>
+                    <span>BACK</span>
+                </a>
+                <span class="page-title">SETTINGS</span>
+            </div>
+            <div class="nav-actions">
+                <button class="nav-icon-btn" id="darkModeToggle" title="Toggle Dark Mode">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+                <div class="nav-account">
+                    <button class="nav-icon-btn" id="accountBtn" title="Account">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                    </button>
+                    <div class="account-dropdown" id="accountDropdown">
+                        <a href="#" class="dropdown-item" id="profileBtn" style="display: none;">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="12" cy="7" r="4"></circle>
+                            </svg>
+                            <span>PROFILE</span>
+                        </a>
+                        <a href="settings.html" class="dropdown-item active">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="3"></circle>
+                                <path d="M12 1v6m0 6v6m-6-6h6m6 0h-6m-5.2-5.2l4.2 4.2m4.2 4.2l4.2 4.2m0-12.4l-4.2 4.2M7.8 16.6l-4.2 4.2"></path>
+                            </svg>
+                            <span>SETTINGS</span>
+                        </a>
+                        <a href="#" class="dropdown-item" id="logoutBtn">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                                <polyline points="16 17 21 12 16 7"></polyline>
+                                <line x1="21" y1="12" x2="9" y2="12"></line>
+                            </svg>
+                            <span>LOGOUT</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Account Section -->
+        <div class="settings-section">
+                <div class="section-header">
+                    <h2>ACCOUNT</h2>
+                </div>
+                <div class="section-content">
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <div class="setting-label">USERNAME</div>
+                            <div class="setting-value" id="usernameDisplay">Loading...</div>
+                        </div>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <div class="setting-label">IN-GAME NAME</div>
+                            <div class="setting-value" id="inGameNameDisplay">Loading...</div>
+                        </div>
+                    </div>
+                </div>
+        </div>
+
+        <!-- Privacy Section -->
+        <div class="settings-section">
+                <div class="section-header">
+                    <h2>PRIVACY</h2>
+                </div>
+                <div class="section-content">
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <div class="setting-label">PUBLIC PROFILE</div>
+                            <div class="setting-description">Allow others to view your kill statistics</div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="publicProfileToggle">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+        </div>
+
+        <!-- Save Button -->
+        <div class="settings-actions">
+            <button class="save-btn" id="saveBtn">SAVE CHANGES</button>
+            <div class="save-message" id="saveMessage"></div>
+        </div>
+    </div>
+
+    <script src="config/api.js"></script>
+    <script src="settings.js"></script>
+</body>
+</html>

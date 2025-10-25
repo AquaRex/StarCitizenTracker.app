@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>REGISTER - STAR TRACKER</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="auth.css">
+</head>
+<body>
+    <div class="main-container">
+        <!-- Header -->
+        <header class="header">
+            <h1>STAR CITIZEN TRACKER</h1>
+        </header>
+
+        <!-- Auth Container -->
+        <div class="auth-container">
+            <div class="auth-header">
+                <h2>REGISTER</h2>
+            </div>
+
+            <form class="auth-form" id="registerForm" onsubmit="handleRegister(event)">
+                <div class="form-group">
+                    <label for="username" class="form-label">USERNAME</label>
+                    <input 
+                        type="text" 
+                        id="username" 
+                        name="username" 
+                        class="form-input" 
+                        placeholder="CHOOSE USERNAME"
+                        autocomplete="username"
+                        required
+                        minlength="3"
+                        maxlength="100"
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="inGameName" class="form-label">IN-GAME NAME</label>
+                    <input 
+                        type="text" 
+                        id="inGameName" 
+                        name="inGameName" 
+                        class="form-input" 
+                        placeholder="STAR CITIZEN HANDLE"
+                        required
+                        maxlength="100"
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="email" class="form-label">EMAIL (OPTIONAL)</label>
+                    <input 
+                        type="email" 
+                        id="email" 
+                        name="email" 
+                        class="form-input" 
+                        placeholder="YOUR@EMAIL.COM"
+                        autocomplete="email"
+                        maxlength="255"
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="password" class="form-label">PASSWORD</label>
+                    <input 
+                        type="password" 
+                        id="password" 
+                        name="password" 
+                        class="form-input" 
+                        placeholder="CHOOSE PASSWORD"
+                        autocomplete="new-password"
+                        required
+                        minlength="6"
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="confirmPassword" class="form-label">CONFIRM PASSWORD</label>
+                    <input 
+                        type="password" 
+                        id="confirmPassword" 
+                        name="confirmPassword" 
+                        class="form-input" 
+                        placeholder="CONFIRM PASSWORD"
+                        autocomplete="new-password"
+                        required
+                        minlength="6"
+                    >
+                </div>
+
+                <div class="form-message" id="formMessage"></div>
+
+                <button type="submit" class="auth-button" id="registerButton">
+                    <span id="buttonText">REGISTER</span>
+                </button>
+            </form>
+
+            <div class="auth-footer">
+                <span class="auth-footer-text">ALREADY HAVE AN ACCOUNT?</span>
+                <a href="login.html" class="auth-link">LOGIN HERE</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="config/api.js"></script>
+    <script src="auth.js"></script>
+</body>
+</html>
