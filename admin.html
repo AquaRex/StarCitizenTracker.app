@@ -556,6 +556,12 @@
             document.body.classList.add('dark-mode');
         }
 
+        // Set admin username in header
+        const adminUsername = localStorage.getItem('adminUsername');
+        if (adminUsername) {
+            document.getElementById('adminUsername').textContent = adminUsername.toUpperCase();
+        }
+
         document.getElementById('darkModeToggle').addEventListener('click', toggleDarkMode);
 
         // Load initial data

@@ -51,12 +51,12 @@
                 <div class="form-message" id="formMessage"></div>
 
                 <button type="submit" class="auth-button" id="loginButton">
-                    <span id="buttonText">REQUEST ACCESS</span>
+                    <span id="buttonText">LOGIN</span>
                 </button>
             </form>
 
             <div class="auth-footer">
-                <span class="auth-footer-text" style="color: #d05252;">⚠️ 2-FACTOR AUTHENTICATION REQUIRED</span>
+                <span class="auth-footer-text" style="color: #d05252;">⚠️ AUTHORIZED ACCESS ONLY</span>
             </div>
         </div>
     </div>
@@ -64,7 +64,7 @@
     <script src="config/api.js"></script>
     <script>
         // Redirect if already logged in
-        if (sessionStorage.getItem('adminToken')) {
+        if (localStorage.getItem('adminToken')) {
             window.location.href = 'admin.html';
         }
 
@@ -100,31 +100,33 @@
 
                 const data = await response.json();
 
-                console.log('Login response:', { status: response.status, data });
-
                 if (!response.ok) {
-                    formMessage.textContent = data.message?.toUpperCase() || 'AUTHENTICATION FAILED';
+                    formMessage.textContent = data.message?.toUpperCase() || 'INVALID CREDENTIALS';
                     formMessage.classList.add('error');
                     loginButton.disabled = false;
-                    buttonText.textContent = 'REQUEST ACCESS';
+                    buttonText.textContent = 'LOGIN';
                     return;
                 }
 
-                formMessage.textContent = `VERIFICATION EMAIL SENT TO ${data.email}. CHECK YOUR EMAIL TO COMPLETE LOGIN.`;
+                // Store token and redirect
+                localStorage.setItem('adminToken', data.token);
+                localStorage.setItem('adminUsername', username);
+                
+                formMessage.textContent = 'LOGIN SUCCESSFUL';
                 formMessage.classList.add('success');
+                buttonText.textContent = 'SUCCESS ✓';
                 
-                // Clear form
-                document.getElementById('username').value = '';
-                document.getElementById('password').value = '';
-                
-                buttonText.textContent = 'EMAIL SENT ✓';
+                // Redirect to admin panel
+                setTimeout(() => {
+                    window.location.href = 'admin.html';
+                }, 500);
 
             } catch (error) {
                 console.error('Login error:', error);
-                formMessage.textContent = 'SYSTEM ERROR. PLEASE TRY AGAIN';
+                formMessage.textContent = 'CONNECTION ERROR. PLEASE TRY AGAIN';
                 formMessage.classList.add('error');
                 loginButton.disabled = false;
-                buttonText.textContent = 'REQUEST ACCESS';
+                buttonText.textContent = 'LOGIN';
             }
         });
     </script>
