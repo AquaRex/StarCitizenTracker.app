@@ -61,10 +61,13 @@
         </div>
 
         <!-- View Buttons -->
-        <div class="view-buttons">
+        <div class="view-buttons" style="margin-bottom: 0; border-bottom: none;">
             <button class="view-btn active" onclick="switchTab('users', event)">USERS</button>
             <button class="view-btn" onclick="switchTab('audit', event)">AUDIT LOGS</button>
             <button class="view-btn" onclick="switchTab('tools', event)">TOOLS</button>
+        </div>
+        <div class="view-buttons" style="grid-template-columns: 1fr;">
+            <button class="view-btn" onclick="switchTab('sql', event)">SQL QUERY</button>
         </div>
 
         <!-- Users Tab -->
@@ -132,6 +135,38 @@
                 <button class="view-btn" onclick="clearKillsDatabase()" style="background: #d05252; border-color: #d05252; color: #aba9a2; border-radius: 0; border: none;">CLEAR KILLS DATABASE</button>
             </div>
         </div>
+
+        <!-- SQL Query Tab -->
+        <div id="sqlTab" style="display: none;">
+            <div class="filter-panel">
+                <div class="filter-row">
+                    <div style="padding: 25px 40px; font-size: 11px; letter-spacing: 2px; text-transform: uppercase;">DIRECT SQL QUERY EXECUTOR</div>
+                </div>
+                <div class="filter-row" style="grid-template-columns: repeat(4, 1fr); gap: 2px;">
+                    <button class="view-btn" onclick="setQuery('SELECT * FROM Users')" style="border-radius: 0; border-right: 2px solid #18140c;">SHOW ALL USERS</button>
+                    <button class="view-btn" onclick="setQuery('SELECT * FROM Kills')" style="border-radius: 0; border-right: 2px solid #18140c;">SHOW ALL KILLS</button>
+                    <button class="view-btn" onclick="setQuery('SELECT * FROM Admins')" style="border-radius: 0; border-right: 2px solid #18140c;">SHOW ADMINS</button>
+                    <button class="view-btn" onclick="setQuery('SELECT COUNT(*) as TotalUsers FROM Users')" style="border-radius: 0;">COUNT USERS</button>
+                </div>
+                <div class="filter-row" style="grid-template-columns: repeat(4, 1fr); gap: 2px;">
+                    <button class="view-btn" onclick="setQuery('SELECT TOP 10 * FROM Users ORDER BY CreatedAt DESC')" style="border-radius: 0; border-right: 2px solid #18140c;">RECENT USERS</button>
+                    <button class="view-btn" onclick="setQuery('SELECT TOP 10 * FROM Kills ORDER BY KillTime DESC')" style="border-radius: 0; border-right: 2px solid #18140c;">RECENT KILLS</button>
+                    <button class="view-btn" onclick="setQuery('SELECT u.Username, COUNT(k.Id) as KillCount FROM Users u LEFT JOIN Kills k ON u.Id = k.UserId GROUP BY u.Username ORDER BY KillCount DESC')" style="border-radius: 0; border-right: 2px solid #18140c;">LEADERBOARD</button>
+                    <button class="view-btn" onclick="setQuery('SELECT * FROM AdminAuditLogs ORDER BY Timestamp DESC')" style="border-radius: 0;">AUDIT LOGS</button>
+                </div>
+                <div class="filter-row" style="grid-template-columns: 1fr;">
+                    <textarea id="sqlQuery" class="search-input" placeholder="ENTER SQL QUERY..." style="min-height: 150px; font-family: 'Courier New', monospace; resize: vertical; padding: 15px;"></textarea>
+                </div>
+                <div class="filter-row" style="grid-template-columns: 1fr 1fr;">
+                    <button class="view-btn" onclick="executeSqlQuery()" style="background: #d05252; border-color: #d05252; color: #aba9a2;">EXECUTE QUERY</button>
+                    <button class="view-btn" onclick="clearSqlQuery()">CLEAR</button>
+                </div>
+            </div>
+            
+            <div class="content-area" id="sqlResults" style="min-height: 300px; padding: 40px;">
+                <div style="font-size: 11px; letter-spacing: 2px; text-transform: uppercase; opacity: 0.6;">QUERY RESULTS WILL APPEAR HERE</div>
+            </div>
+        </div>
     </div>
 
     <script src="config/api.js"></script>
@@ -175,10 +210,17 @@
 
                 if (!response.ok) {
                     const error = await response.text();
-                    throw new Error(error || 'API request failed');
+                    throw new Error(error || `Request failed with status ${response.status}`);
                 }
 
-                return response.json();
+                // For DELETE requests that might not return JSON
+                const contentType = response.headers.get('content-type');
+                if (contentType && contentType.includes('application/json')) {
+                    return response.json();
+                }
+                
+                // Return success object for non-JSON responses
+                return { success: true };
             } catch (error) {
                 console.error('API call failed:', error);
                 throw error;
@@ -205,6 +247,8 @@
             try {
                 const result = await apiCall('/api/Admin/users');
                 if (result) {
+                    console.log('Loaded users:', result);
+                    console.log('First user:', result[0]);
                     allUsers = result;
                     filteredUsers = [...allUsers];
                     renderUsers();
@@ -303,14 +347,18 @@
         }
 
         async function deleteUser(userId) {
+            console.log('deleteUser called with userId:', userId, 'type:', typeof userId);
             if (confirm('Are you sure you want to delete this user? This action cannot be undone.')) {
                 try {
-                    await apiCall(`/api/Admin/users/${userId}`, { method: 'DELETE' });
+                    const endpoint = `/api/Admin/users/${userId}`;
+                    console.log('Calling DELETE:', endpoint);
+                    await apiCall(endpoint, { method: 'DELETE' });
                     alert('User deleted successfully');
                     await loadUsers();
                     await loadStats();
                 } catch (error) {
-                    alert('Failed to delete user: ' + error.message);
+                    console.error('Delete error:', error);
+                    alert('Failed to delete user: ' + JSON.stringify(error.message || error));
                 }
             }
         }
@@ -428,6 +476,7 @@
             document.getElementById('usersTab').style.display = 'none';
             document.getElementById('auditTab').style.display = 'none';
             document.getElementById('toolsTab').style.display = 'none';
+            document.getElementById('sqlTab').style.display = 'none';
 
             document.querySelectorAll('.view-btn').forEach(btn => btn.classList.remove('active'));
 
@@ -437,6 +486,259 @@
             if (tabName === 'audit' && document.getElementById('auditContent').innerHTML.includes('LOADING')) {
                 loadAuditLogs();
             }
+        }
+
+        async function executeSqlQuery() {
+            const query = document.getElementById('sqlQuery').value.trim();
+            const resultsDiv = document.getElementById('sqlResults');
+            
+            if (!query) {
+                resultsDiv.innerHTML = '<div style="color: #d05252; font-size: 11px; letter-spacing: 2px;">ERROR: QUERY CANNOT BE EMPTY</div>';
+                return;
+            }
+            
+            resultsDiv.innerHTML = '<div style="font-size: 11px; letter-spacing: 2px; text-transform: uppercase;">EXECUTING QUERY...</div>';
+            
+            try {
+                const result = await apiCall('/api/Admin/execute-sql', {
+                    method: 'POST',
+                    body: JSON.stringify({ query: query })
+                });
+                
+                if (result && result.data) {
+                    // Display results as table
+                    if (result.data.length === 0) {
+                        resultsDiv.innerHTML = `<div style="color: #d05252; font-size: 11px; letter-spacing: 2px;">SUCCESS: QUERY EXECUTED. ${result.rowsAffected || 0} ROWS AFFECTED.</div>`;
+                    } else {
+                        let html = `<div style="color: #d05252; font-size: 11px; letter-spacing: 2px; margin-bottom: 20px;">SUCCESS: ${result.data.length} ROWS RETURNED</div>`;
+                        html += '<div style="overflow-x: auto;"><table id="sqlResultsTable" style="width: 100%; border-collapse: collapse; font-size: 11px; border: 2px solid;">';
+                        
+                        // Calculate optimal width for each column based on content type
+                        const keys = Object.keys(result.data[0]);
+                        const columnWidths = {};
+                        keys.forEach((key, index) => {
+                            let maxLength = key.length;
+                            let columnType = 'string'; // default
+                            
+                            // Detect column type from first non-null value
+                            for (let row of result.data) {
+                                const value = row[key];
+                                if (value !== null) {
+                                    const strValue = String(value);
+                                    
+                                    // Check for ID (column name or numeric value)
+                                    if (key.toLowerCase().includes('id') || key.toLowerCase() === 'id') {
+                                        columnType = 'id';
+                                    }
+                                    // Check for boolean
+                                    else if (typeof value === 'boolean' || strValue.toLowerCase() === 'true' || strValue.toLowerCase() === 'false') {
+                                        columnType = 'bool';
+                                    }
+                                    // Check for date/time - stricter detection
+                                    else if ((key.toLowerCase().endsWith('at') || key.toLowerCase().endsWith('date') || 
+                                             key.toLowerCase().includes('created') || key.toLowerCase().includes('updated') ||
+                                             key.toLowerCase().includes('timestamp')) && 
+                                             (/^\d{4}-\d{2}-\d{2}/.test(strValue) || /^\d{1,2}\/\d{1,2}\/\d{4}/.test(strValue))) {
+                                        columnType = 'date';
+                                    }
+                                    // Check for hash (long hex strings or base64)
+                                    else if ((strValue.length > 40 && /^[a-fA-F0-9]+$/.test(strValue)) || 
+                                             (strValue.length > 40 && /^[A-Za-z0-9+/=]+$/.test(strValue)) ||
+                                             key.toLowerCase().includes('hash') || key.toLowerCase().includes('password')) {
+                                        columnType = 'hash';
+                                    }
+                                    // Check for numeric
+                                    else if (!isNaN(value) && typeof value === 'number') {
+                                        columnType = 'number';
+                                    }
+                                    
+                                    maxLength = Math.max(maxLength, strValue.length);
+                                    break;
+                                }
+                            }
+                            
+                            // Set width based on type
+                            let width;
+                            switch(columnType) {
+                                case 'id':
+                                    width = Math.min(Math.max(maxLength * 6, 60), 100);
+                                    break;
+                                case 'bool':
+                                    width = 70;
+                                    break;
+                                case 'date':
+                                    width = 90; // Smaller fixed width for dates
+                                    break;
+                                case 'hash':
+                                    width = 120;
+                                    break;
+                                case 'number':
+                                    width = Math.min(Math.max(maxLength * 7, 70), 120);
+                                    break;
+                                default: // string
+                                    width = Math.min(Math.max(maxLength * 7, 100), 300);
+                            }
+                            
+                            columnWidths[index] = width;
+                        });
+                        
+                        // Store column widths globally for toggle function
+                        window.originalColumnWidths = columnWidths;
+                        
+                        // Headers with resizable columns - styled like view-btn
+                        html += '<thead><tr style="display: flex; border-bottom: 2px solid;">';
+                        keys.forEach((key, index) => {
+                            const width = columnWidths[index];
+                            html += `<th data-col="${index}" class="col-header" style="position: relative; padding: 10px 5px; background: transparent; border: none; border-right: 2px solid; font-size: 10px; font-weight: 300; letter-spacing: 1px; text-align: left; text-transform: uppercase; cursor: pointer; user-select: none; transition: all 0.2s; flex: 0 0 ${width}px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" onclick="toggleColumn(${index})" title="Click to expand/collapse">
+                                ${key}
+                                <div class="resize-handle" data-col="${index}" style="position: absolute; right: 0; top: 0; bottom: 0; width: 2px; cursor: col-resize; background: currentColor; opacity: 0.3; transition: opacity 0.2s;" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='0.3'" onclick="event.stopPropagation()"></div>
+                            </th>`;
+                        });
+                        html += '</tr></thead><tbody>';
+                        
+                        // Rows
+                        result.data.forEach(row => {
+                            html += '<tr style="display: flex;">';
+                            keys.forEach((key, index) => {
+                                const cellValue = row[key] !== null ? String(row[key]) : 'NULL';
+                                const width = columnWidths[index];
+                                html += `<td data-col="${index}" class="sql-cell" style="padding: 8px 5px; border-bottom: 1px solid; border-right: 2px solid; opacity: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 0 0 ${width}px; font-size: 10px;">${cellValue}</td>`;
+                            });
+                            html += '</tr>';
+                        });
+                        
+                        html += '</tbody></table></div>';
+                        resultsDiv.innerHTML = html;
+                        
+                        // Track expanded columns
+                        window.expandedColumns = window.expandedColumns || new Set();
+                        
+                        // Calculate max content width for each column
+                        window.columnMaxWidths = {};
+                        keys.forEach((key, index) => {
+                            let maxWidth = key.length * 8; // Header width
+                            result.data.forEach(row => {
+                                const value = row[key] !== null ? String(row[key]) : 'NULL';
+                                maxWidth = Math.max(maxWidth, value.length * 8);
+                            });
+                            window.columnMaxWidths[index] = Math.min(Math.max(maxWidth, 150), 600);
+                        });
+                        
+                        // Add resize functionality
+                        const resizeHandles = document.querySelectorAll('.resize-handle');
+                        resizeHandles.forEach(handle => {
+                            let startX, startWidth, th;
+                            
+                            handle.addEventListener('mousedown', (e) => {
+                                e.stopPropagation();
+                                th = e.target.parentElement;
+                                startX = e.pageX;
+                                startWidth = parseInt(th.style.flex.split(' ')[2].replace('px', ''));
+                                
+                                const onMouseMove = (e) => {
+                                    const width = startWidth + (e.pageX - startX);
+                                    if (width >= 100 && width <= 800) {
+                                        th.style.flex = `0 0 ${width}px`;
+                                        // Update all cells in this column
+                                        const colIndex = th.getAttribute('data-col');
+                                        document.querySelectorAll(`td[data-col="${colIndex}"]`).forEach(cell => {
+                                            cell.style.flex = `0 0 ${width}px`;
+                                        });
+                                    }
+                                };
+                                
+                                const onMouseUp = () => {
+                                    document.removeEventListener('mousemove', onMouseMove);
+                                    document.removeEventListener('mouseup', onMouseUp);
+                                };
+                                
+                                document.addEventListener('mousemove', onMouseMove);
+                                document.addEventListener('mouseup', onMouseUp);
+                            });
+                        });
+                        
+                        // Add hover effect to headers
+                        document.querySelectorAll('.col-header').forEach(header => {
+                            header.addEventListener('mouseenter', function() {
+                                if (!this.classList.contains('expanded')) {
+                                    this.style.background = document.body.classList.contains('dark-mode') ? '#aba9a2' : '#18140c';
+                                    this.style.color = document.body.classList.contains('dark-mode') ? '#18140c' : '#aba9a2';
+                                }
+                            });
+                            header.addEventListener('mouseleave', function() {
+                                if (!this.classList.contains('expanded')) {
+                                    this.style.background = 'transparent';
+                                    this.style.color = '';
+                                }
+                            });
+                        });
+                    }
+                } else {
+                    resultsDiv.innerHTML = `<div style="color: #d05252; font-size: 11px; letter-spacing: 2px;">SUCCESS: QUERY EXECUTED. ${result.message || ''}</div>`;
+                }
+            } catch (error) {
+                resultsDiv.innerHTML = `<div style="color: #d05252; font-size: 11px; letter-spacing: 2px;">ERROR: ${error.message || 'QUERY FAILED'}</div>`;
+            }
+        }
+        
+        function clearSqlQuery() {
+            document.getElementById('sqlQuery').value = '';
+            document.getElementById('sqlResults').innerHTML = '<div style="font-size: 11px; letter-spacing: 2px; text-transform: uppercase; opacity: 0.6;">QUERY RESULTS WILL APPEAR HERE</div>';
+        }
+
+        function setQuery(query) {
+            document.getElementById('sqlQuery').value = query;
+        }
+
+        function toggleColumn(colIndex) {
+            window.expandedColumns = window.expandedColumns || new Set();
+            
+            const isExpanding = !window.expandedColumns.has(colIndex);
+            
+            if (isExpanding) {
+                window.expandedColumns.add(colIndex);
+            } else {
+                window.expandedColumns.delete(colIndex);
+            }
+            
+            // Get the header element
+            const header = document.querySelector(`th[data-col="${colIndex}"]`);
+            if (!header) return;
+            
+            // Get original width from stored values
+            const originalWidth = window.originalColumnWidths[colIndex];
+            
+            if (isExpanding) {
+                const maxWidth = window.columnMaxWidths[colIndex] || 400;
+                header.style.flex = `0 0 ${maxWidth}px`;
+                header.classList.add('expanded');
+                header.style.background = document.body.classList.contains('dark-mode') ? '#aba9a2' : '#18140c';
+                header.style.color = document.body.classList.contains('dark-mode') ? '#18140c' : '#aba9a2';
+            } else {
+                header.style.flex = `0 0 ${originalWidth}px`;
+                header.classList.remove('expanded');
+                header.style.background = 'transparent';
+                header.style.color = '';
+            }
+            
+            // Update all cells in this column
+            const cells = document.querySelectorAll(`td.sql-cell[data-col="${colIndex}"]`);
+            cells.forEach(cell => {
+                if (isExpanding) {
+                    const maxWidth = window.columnMaxWidths[colIndex] || 400;
+                    cell.style.flex = `0 0 ${maxWidth}px`;
+                    cell.style.whiteSpace = 'normal';
+                    cell.style.overflow = 'visible';
+                    cell.style.textOverflow = 'clip';
+                    cell.style.opacity = '1';
+                } else {
+                    cell.style.flex = `0 0 ${originalWidth}px`;
+                    cell.style.whiteSpace = 'nowrap';
+                    cell.style.overflow = 'hidden';
+                    cell.style.textOverflow = 'ellipsis';
+                    cell.style.opacity = '1';
+                }
+            });
         }
 
         async function loadAuditLogs() {

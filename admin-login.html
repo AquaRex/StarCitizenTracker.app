@@ -22,7 +22,7 @@
             </div>
 
             <form class="auth-form" id="adminLoginForm">
-                <div class="form-group">
+                <div class="form-group" id="usernameGroup">
                     <label for="username" class="form-label">ADMIN USERNAME</label>
                     <input 
                         type="text" 
@@ -35,7 +35,7 @@
                     >
                 </div>
 
-                <div class="form-group">
+                <div class="form-group" id="passwordGroup">
                     <label for="password" class="form-label">PASSWORD</label>
                     <input 
                         type="password" 
@@ -46,6 +46,21 @@
                         autocomplete="current-password"
                         required
                     >
+                </div>
+
+                <div class="form-group" id="codeGroup" style="display: none;">
+                    <label for="verificationCode" class="form-label">VERIFICATION CODE</label>
+                    <input 
+                        type="text" 
+                        id="verificationCode" 
+                        name="verificationCode" 
+                        class="form-input" 
+                        placeholder="ENTER 6-DIGIT CODE FROM EMAIL"
+                        maxlength="6"
+                        pattern="[0-9]{6}"
+                        autocomplete="off"
+                    >
+                    <p style="font-size: 10px; letter-spacing: 1px; opacity: 0.6; margin-top: 10px;">CHECK YOUR EMAIL FOR THE VERIFICATION CODE</p>
                 </div>
 
                 <div class="form-message" id="formMessage"></div>
@@ -63,16 +78,22 @@
 
     <script src="config/api.js"></script>
     <script>
+        console.log('Admin login script loaded');
+        console.log('API_CONFIG:', API_CONFIG);
+        
         // Redirect if already logged in
         if (localStorage.getItem('adminToken')) {
+            console.log('Already logged in, redirecting...');
             window.location.href = 'admin.html';
         }
 
+        let pendingAdminId = null;
+        let awaitingVerification = false;
+
         async function handleLogin(event) {
+            console.log('handleLogin called');
             event.preventDefault();
             
-            const username = document.getElementById('username').value.trim();
-            const password = document.getElementById('password').value;
             const button = document.getElementById('loginButton');
             const buttonText = document.getElementById('buttonText');
             const messageDiv = document.getElementById('formMessage');
@@ -80,59 +101,155 @@
             messageDiv.textContent = '';
             messageDiv.className = 'form-message';
             
-            if (!username || !password) {
-                messageDiv.textContent = 'USERNAME AND PASSWORD ARE REQUIRED';
-                messageDiv.classList.add('error');
-                return;
-            }
-            
             button.disabled = true;
-            buttonText.textContent = 'AUTHENTICATING...';
             
-            try {
-                const response = await fetch(`${API_CONFIG.BASE_URL}/api/Admin/login`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        username: username,
-                        password: password
-                    })
-                });
+            if (!awaitingVerification) {
+                // Step 1: Username and password
+                const username = document.getElementById('username').value.trim();
+                const password = document.getElementById('password').value;
                 
-                const data = await response.json();
+                console.log('Username:', username, 'Password length:', password.length);
                 
-                if (response.ok && data.token) {
-                    // Store token and username - EXACT same as regular login
-                    localStorage.setItem('adminToken', data.token);
-                    localStorage.setItem('adminUsername', data.username);
+                if (!username || !password) {
+                    messageDiv.textContent = 'USERNAME AND PASSWORD ARE REQUIRED';
+                    messageDiv.classList.add('error');
+                    button.disabled = false;
+                    return;
+                }
+                
+                buttonText.textContent = 'AUTHENTICATING...';
+                
+                try {
+                    const url = `${API_CONFIG.BASE_URL}/api/Admin/login`;
+                    console.log('Calling API:', url);
                     
-                    messageDiv.textContent = 'LOGIN SUCCESSFUL! REDIRECTING...';
-                    messageDiv.classList.add('success');
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            username: username,
+                            password: password
+                        })
+                    });
                     
-                    // Redirect to admin panel
-                    setTimeout(() => {
-                        window.location.href = 'admin.html';
-                    }, 500);
+                    console.log('Response status:', response.status);
+                    const data = await response.json();
+                    console.log('Response data:', data);
                     
-                } else {
-                    messageDiv.textContent = (data.message || 'INVALID CREDENTIALS').toUpperCase();
+                    if (response.ok && data.requiresVerification) {
+                        // Show verification code input
+                        pendingAdminId = data.adminId;
+                        awaitingVerification = true;
+                        
+                        document.getElementById('usernameGroup').style.display = 'none';
+                        document.getElementById('passwordGroup').style.display = 'none';
+                        document.getElementById('codeGroup').style.display = 'block';
+                        document.getElementById('verificationCode').required = true;
+                        document.getElementById('verificationCode').focus();
+                        
+                        messageDiv.textContent = 'VERIFICATION CODE SENT TO YOUR EMAIL';
+                        messageDiv.classList.add('success');
+                        buttonText.textContent = 'VERIFY CODE';
+                        button.disabled = false;
+                        
+                    } else {
+                        messageDiv.textContent = (data.message || 'INVALID CREDENTIALS').toUpperCase();
+                        messageDiv.classList.add('error');
+                        button.disabled = false;
+                        buttonText.textContent = 'LOGIN';
+                    }
+                    
+                } catch (error) {
+                    console.error('Login error:', error);
+                    messageDiv.textContent = 'CONNECTION ERROR. PLEASE TRY AGAIN';
                     messageDiv.classList.add('error');
                     button.disabled = false;
                     buttonText.textContent = 'LOGIN';
                 }
                 
-            } catch (error) {
-                console.error('Login error:', error);
-                messageDiv.textContent = 'CONNECTION ERROR. PLEASE TRY AGAIN';
-                messageDiv.classList.add('error');
-                button.disabled = false;
-                buttonText.textContent = 'LOGIN';
+            } else {
+                // Step 2: Verify code
+                const code = document.getElementById('verificationCode').value.trim();
+                
+                if (!code || code.length !== 6) {
+                    messageDiv.textContent = 'PLEASE ENTER THE 6-DIGIT CODE';
+                    messageDiv.classList.add('error');
+                    button.disabled = false;
+                    return;
+                }
+                
+                buttonText.textContent = 'VERIFYING...';
+                
+                try {
+                    const url = `${API_CONFIG.BASE_URL}/api/Admin/verify-code`;
+                    console.log('Calling API:', url);
+                    
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            adminId: pendingAdminId,
+                            code: code
+                        })
+                    });
+                    
+                    console.log('Response status:', response.status);
+                    const data = await response.json();
+                    console.log('Response data:', data);
+                    
+                    if (response.ok && data.token) {
+                        // Store token and username
+                        localStorage.setItem('adminToken', data.token);
+                        localStorage.setItem('adminUsername', data.username);
+                        
+                        messageDiv.textContent = 'LOGIN SUCCESSFUL! REDIRECTING...';
+                        messageDiv.classList.add('success');
+                        
+                        console.log('Login successful, redirecting...');
+                        
+                        // Redirect to admin panel
+                        setTimeout(() => {
+                            window.location.href = 'admin.html';
+                        }, 500);
+                        
+                    } else if (data.expired) {
+                        // Code expired - reset form
+                        messageDiv.textContent = 'CODE EXPIRED. PLEASE LOGIN AGAIN';
+                        messageDiv.classList.add('error');
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 2000);
+                    } else {
+                        messageDiv.textContent = (data.message || 'INVALID CODE').toUpperCase();
+                        messageDiv.classList.add('error');
+                        button.disabled = false;
+                        buttonText.textContent = 'VERIFY CODE';
+                    }
+                    
+                } catch (error) {
+                    console.error('Verification error:', error);
+                    messageDiv.textContent = 'CONNECTION ERROR. PLEASE TRY AGAIN';
+                    messageDiv.classList.add('error');
+                    button.disabled = false;
+                    buttonText.textContent = 'VERIFY CODE';
+                }
             }
         }
 
-        document.getElementById('adminLoginForm').addEventListener('submit', handleLogin);
+        // Wait for DOM to be ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', function() {
+                console.log('DOM loaded, attaching form handler');
+                document.getElementById('adminLoginForm').addEventListener('submit', handleLogin);
+            });
+        } else {
+            console.log('DOM already loaded, attaching form handler immediately');
+            document.getElementById('adminLoginForm').addEventListener('submit', handleLogin);
+        }
     </script>
 </body>
 </html>
