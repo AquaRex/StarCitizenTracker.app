@@ -47,7 +47,22 @@ async function handleLogin(event) {
             }, 1000);
             
         } else {
-            showMessage(messageDiv, data.message || 'Login failed. Please check your credentials.', 'error');
+            // Check if verification is required
+            if (data.requiresVerification) {
+                showMessage(messageDiv, data.message || 'Please verify your email before logging in.', 'error');
+                // Show resend link after a delay
+                setTimeout(() => {
+                    const resendLink = document.createElement('a');
+                    resendLink.href = 'verify.html';
+                    resendLink.textContent = 'Resend verification email';
+                    resendLink.style.color = '#00ff41';
+                    resendLink.style.display = 'block';
+                    resendLink.style.marginTop = '10px';
+                    messageDiv.appendChild(resendLink);
+                }, 1000);
+            } else {
+                showMessage(messageDiv, data.message || 'Login failed. Please check your credentials.', 'error');
+            }
             setButtonLoading(button, false);
         }
         
@@ -74,8 +89,15 @@ async function handleRegister(event) {
     hideMessage(messageDiv);
     
     // Validate input
-    if (!username || !password || !confirmPassword || !inGameName) {
+    if (!username || !password || !confirmPassword || !inGameName || !email) {
         showMessage(messageDiv, 'Please fill in all required fields', 'error');
+        return;
+    }
+    
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+        showMessage(messageDiv, 'Please enter a valid email address', 'error');
         return;
     }
     
@@ -107,23 +129,21 @@ async function handleRegister(event) {
                 username: username,
                 password: password,
                 inGameName: inGameName,
-                email: email || null
+                email: email
             })
         });
         
         const data = await response.json();
         
         if (response.ok) {
-            // Show success message
-            showMessage(messageDiv, 'Registration successful! Redirecting to login...', 'success');
+            // Show success message with verification notice
+            showMessage(messageDiv, 'Registration successful! Please check your email to verify your account before logging in.', 'success');
             
             // Clear form
             document.getElementById('registerForm').reset();
             
-            // Redirect to login page
-            setTimeout(() => {
-                window.location.href = 'login.html';
-            }, 2000);
+            // Don't redirect - let user see the message and check their email
+            // They will click the link in their email to verify
             
         } else {
             // Show error message from API

@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ADMIN PANEL - STAR CITIZEN TRACKER</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            background-color: #aba9a2;
+            color: #18140c;
+            font-family: Arial, sans-serif;
+            font-weight: 300;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .admin-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            border-bottom: 2px solid #18140c;
+            margin-bottom: 30px;
+        }
+
+        .admin-header h1 {
+            margin: 0;
+            font-size: 28px;
+            font-weight: 300;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+
+        .admin-header .user-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .admin-header .username {
+            font-size: 14px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .btn {
+            background-color: #18140c;
+            color: #aba9a2;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-size: 12px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            font-weight: 300;
+            transition: background-color 0.2s;
+        }
+
+        .btn:hover {
+            background-color: #2a2419;
+        }
+
+        .btn-danger {
+            background-color: #d05252;
+        }
+
+        .btn-danger:hover {
+            background-color: #b03d3d;
+        }
+
+        .btn-small {
+            padding: 5px 15px;
+            font-size: 10px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background-color: #c5c3be;
+            border: 2px solid #18140c;
+            padding: 20px;
+        }
+
+        .stat-card h3 {
+            margin: 0 0 10px 0;
+            font-size: 12px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            font-weight: 300;
+        }
+
+        .stat-card .stat-value {
+            font-size: 36px;
+            font-weight: 300;
+            color: #d05252;
+        }
+
+        .section {
+            background-color: #c5c3be;
+            border: 2px solid #18140c;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .section-header h2 {
+            margin: 0;
+            font-size: 18px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            font-weight: 300;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #18140c;
+        }
+
+        .tab {
+            background: none;
+            border: none;
+            border-bottom: 2px solid transparent;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-size: 12px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: #18140c;
+            margin-bottom: -2px;
+        }
+
+        .tab.active {
+            border-bottom-color: #d05252;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+        }
+
+        th, td {
+            text-align: left;
+            padding: 12px;
+            border-bottom: 1px solid #18140c;
+        }
+
+        th {
+            font-weight: 300;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            background-color: #18140c;
+            color: #aba9a2;
+        }
+
+        tr:hover {
+            background-color: #d5d3ce;
+        }
+
+        .pagination {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(24, 20, 12, 0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background-color: #c5c3be;
+            border: 2px solid #18140c;
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+        }
+
+        .modal-header {
+            margin-bottom: 20px;
+        }
+
+        .modal-header h3 {
+            margin: 0;
+            font-size: 18px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            font-weight: 300;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 12px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            background-color: #aba9a2;
+            border: 2px solid #18140c;
+            color: #18140c;
+            font-size: 14px;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+
+        .error-message {
+            background-color: #d05252;
+            color: #aba9a2;
+            padding: 10px;
+            margin-bottom: 15px;
+            font-size: 12px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .success-message {
+            background-color: #52d075;
+            color: #18140c;
+            padding: 10px;
+            margin-bottom: 15px;
+            font-size: 12px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            font-size: 14px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .no-data {
+            text-align: center;
+            padding: 40px;
+            font-size: 12px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <div class="admin-header">
+            <h1>ADMIN PANEL</h1>
+            <div class="user-info">
+                <span class="username" id="adminUsername"></span>
+                <button class="btn btn-small btn-danger" onclick="logout()">LOGOUT</button>
+            </div>
+        </div>
+
+        <div class="stats-grid" id="statsGrid">
+            <div class="loading">LOADING STATISTICS...</div>
+        </div>
+
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('users')">USERS</button>
+            <button class="tab" onclick="switchTab('audit')">AUDIT LOGS</button>
+            <button class="tab" onclick="switchTab('tools')">TOOLS</button>
+        </div>
+
+        <div id="usersTab" class="tab-content active">
+            <div class="section">
+                <div class="section-header">
+                    <h2>USER MANAGEMENT</h2>
+                </div>
+                <div id="usersContent" class="loading">LOADING USERS...</div>
+            </div>
+        </div>
+
+        <div id="auditTab" class="tab-content">
+            <div class="section">
+                <div class="section-header">
+                    <h2>AUDIT LOGS</h2>
+                </div>
+                <div id="auditContent" class="loading">LOADING AUDIT LOGS...</div>
+            </div>
+        </div>
+
+        <div id="toolsTab" class="tab-content">
+            <div class="section">
+                <div class="section-header">
+                    <h2>KILL REASSIGNMENT</h2>
+                </div>
+                <div id="errorMessage" class="error-message" style="display: none;"></div>
+                <div id="successMessage" class="success-message" style="display: none;"></div>
+                <div class="form-group">
+                    <label>SOURCE USER ID</label>
+                    <input type="number" id="sourceUserId" placeholder="User ID to move kills from">
+                </div>
+                <div class="form-group">
+                    <label>TARGET USER ID</label>
+                    <input type="number" id="targetUserId" placeholder="User ID to move kills to">
+                </div>
+                <button class="btn" onclick="reassignKills()">REASSIGN KILLS</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="userModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>USER DETAILS</h3>
+            </div>
+            <div id="userModalContent"></div>
+            <div class="form-actions">
+                <button class="btn" onclick="closeModal()">CLOSE</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { API_BASE_URL } from './config/api.js';
+
+        const adminToken = sessionStorage.getItem('adminToken');
+        const adminUsername = sessionStorage.getItem('adminUsername');
+
+        if (!adminToken || !adminUsername) {
+            window.location.href = 'admin-login.html';
+        }
+
+        document.getElementById('adminUsername').textContent = adminUsername;
+
+        async function apiCall(endpoint, options = {}) {
+            const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+                ...options,
+                headers: {
+                    'Authorization': `Bearer ${adminToken}`,
+                    'Content-Type': 'application/json',
+                    ...options.headers
+                }
+            });
+
+            if (response.status === 401) {
+                sessionStorage.removeItem('adminToken');
+                sessionStorage.removeItem('adminUsername');
+                window.location.href = 'admin-login.html';
+                return null;
+            }
+
+            return response;
+        }
+
+        async function loadStats() {
+            try {
+                const response = await apiCall('/admin/stats');
+                const data = await response.json();
+
+                const statsHtml = `
+                    <div class="stat-card">
+                        <h3>TOTAL USERS</h3>
+                        <div class="stat-value">${data.totalUsers}</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>VERIFIED USERS</h3>
+                        <div class="stat-value">${data.verifiedUsers}</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>TOTAL KILLS</h3>
+                        <div class="stat-value">${data.totalKills}</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>DELETED USERS</h3>
+                        <div class="stat-value">${data.totalDeletedUsers}</div>
+                    </div>
+                `;
+
+                document.getElementById('statsGrid').innerHTML = statsHtml;
+            } catch (error) {
+                console.error('Error loading stats:', error);
+                document.getElementById('statsGrid').innerHTML = '<div class="no-data">ERROR LOADING STATISTICS</div>';
+            }
+        }
+
+        async function loadUsers(page = 1) {
+            try {
+                const response = await apiCall(`/admin/users?page=${page}&pageSize=20`);
+                const data = await response.json();
+
+                if (data.users.length === 0) {
+                    document.getElementById('usersContent').innerHTML = '<div class="no-data">NO USERS FOUND</div>';
+                    return;
+                }
+
+                const tableHtml = `
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>USERNAME</th>
+                                    <th>EMAIL</th>
+                                    <th>IN-GAME NAME</th>
+                                    <th>KILLS</th>
+                                    <th>VERIFIED</th>
+                                    <th>CREATED</th>
+                                    <th>ACTIONS</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${data.users.map(user => `
+                                    <tr>
+                                        <td>${user.id}</td>
+                                        <td>${user.username}</td>
+                                        <td>${user.email || '-'}</td>
+                                        <td>${user.inGameName || '-'}</td>
+                                        <td>${user.killCount}</td>
+                                        <td>${user.emailVerified ? '✓' : '✗'}</td>
+                                        <td>${new Date(user.createdAt).toLocaleDateString()}</td>
+                                        <td>
+                                            <button class="btn btn-small" onclick="window.viewUser(${user.id})">VIEW</button>
+                                            <button class="btn btn-small btn-danger" onclick="window.deleteUser(${user.id}, '${user.username}')">DELETE</button>
+                                        </td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="pagination">
+                        <button class="btn btn-small" ${page === 1 ? 'disabled' : ''} onclick="window.loadUsers(${page - 1})">PREVIOUS</button>
+                        <span>PAGE ${page} OF ${data.totalPages}</span>
+                        <button class="btn btn-small" ${page === data.totalPages ? 'disabled' : ''} onclick="window.loadUsers(${page + 1})">NEXT</button>
+                    </div>
+                `;
+
+                document.getElementById('usersContent').innerHTML = tableHtml;
+            } catch (error) {
+                console.error('Error loading users:', error);
+                document.getElementById('usersContent').innerHTML = '<div class="no-data">ERROR LOADING USERS</div>';
+            }
+        }
+
+        async function loadAuditLogs(page = 1) {
+            try {
+                const response = await apiCall(`/admin/audit-logs?page=${page}&pageSize=50`);
+                const data = await response.json();
+
+                if (data.logs.length === 0) {
+                    document.getElementById('auditContent').innerHTML = '<div class="no-data">NO AUDIT LOGS FOUND</div>';
+                    return;
+                }
+
+                const tableHtml = `
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>TIMESTAMP</th>
+                                    <th>ADMIN</th>
+                                    <th>ACTION</th>
+                                    <th>TARGET</th>
+                                    <th>DETAILS</th>
+                                    <th>IP ADDRESS</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${data.logs.map(log => `
+                                    <tr>
+                                        <td>${new Date(log.timestamp).toLocaleString()}</td>
+                                        <td>${log.adminUsername}</td>
+                                        <td>${log.action}</td>
+                                        <td>${log.targetTable || '-'} ${log.targetId || ''}</td>
+                                        <td>${log.details || '-'}</td>
+                                        <td>${log.ipAddress}</td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="pagination">
+                        <button class="btn btn-small" ${page === 1 ? 'disabled' : ''} onclick="window.loadAuditLogs(${page - 1})">PREVIOUS</button>
+                        <span>PAGE ${page} OF ${data.totalPages}</span>
+                        <button class="btn btn-small" ${page === data.totalPages ? 'disabled' : ''} onclick="window.loadAuditLogs(${page + 1})">NEXT</button>
+                    </div>
+                `;
+
+                document.getElementById('auditContent').innerHTML = tableHtml;
+            } catch (error) {
+                console.error('Error loading audit logs:', error);
+                document.getElementById('auditContent').innerHTML = '<div class="no-data">ERROR LOADING AUDIT LOGS</div>';
+            }
+        }
+
+        window.switchTab = function(tab) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            document.getElementById(`${tab}Tab`).classList.add('active');
+
+            if (tab === 'audit') {
+                loadAuditLogs();
+            }
+        };
+
+        window.viewUser = async function(userId) {
+            try {
+                const response = await apiCall(`/admin/users/${userId}`);
+                const user = await response.json();
+
+                const modalContent = `
+                    <div class="form-group">
+                        <label>USER ID</label>
+                        <div>${user.id}</div>
+                    </div>
+                    <div class="form-group">
+                        <label>USERNAME</label>
+                        <div>${user.username}</div>
+                    </div>
+                    <div class="form-group">
+                        <label>EMAIL</label>
+                        <div>${user.email || '-'}</div>
+                    </div>
+                    <div class="form-group">
+                        <label>IN-GAME NAME</label>
+                        <div>${user.inGameName || '-'}</div>
+                    </div>
+                    <div class="form-group">
+                        <label>TOTAL KILLS</label>
+                        <div>${user.kills.length}</div>
+                    </div>
+                    <div class="form-group">
+                        <label>CREATED</label>
+                        <div>${new Date(user.createdAt).toLocaleString()}</div>
+                    </div>
+                    <div class="form-group">
+                        <label>LAST LOGIN</label>
+                        <div>${user.lastLoginAt ? new Date(user.lastLoginAt).toLocaleString() : 'Never'}</div>
+                    </div>
+                `;
+
+                document.getElementById('userModalContent').innerHTML = modalContent;
+                document.getElementById('userModal').classList.add('active');
+            } catch (error) {
+                console.error('Error loading user:', error);
+                alert('ERROR LOADING USER DETAILS');
+            }
+        };
+
+        window.deleteUser = async function(userId, username) {
+            if (!confirm(`ARE YOU SURE YOU WANT TO DELETE USER "${username}" (ID: ${userId})?`)) {
+                return;
+            }
+
+            try {
+                const response = await apiCall(`/admin/users/${userId}`, { method: 'DELETE' });
+                const data = await response.json();
+
+                alert(data.message);
+                loadUsers();
+                loadStats();
+            } catch (error) {
+                console.error('Error deleting user:', error);
+                alert('ERROR DELETING USER');
+            }
+        };
+
+        window.closeModal = function() {
+            document.getElementById('userModal').classList.remove('active');
+        };
+
+        window.reassignKills = async function() {
+            const sourceUserId = parseInt(document.getElementById('sourceUserId').value);
+            const targetUserId = parseInt(document.getElementById('targetUserId').value);
+            const errorMessage = document.getElementById('errorMessage');
+            const successMessage = document.getElementById('successMessage');
+
+            errorMessage.style.display = 'none';
+            successMessage.style.display = 'none';
+
+            if (!sourceUserId || !targetUserId) {
+                errorMessage.textContent = 'PLEASE PROVIDE BOTH USER IDS';
+                errorMessage.style.display = 'block';
+                return;
+            }
+
+            if (sourceUserId === targetUserId) {
+                errorMessage.textContent = 'SOURCE AND TARGET USER IDS MUST BE DIFFERENT';
+                errorMessage.style.display = 'block';
+                return;
+            }
+
+            if (!confirm(`REASSIGN ALL KILLS FROM USER ${sourceUserId} TO USER ${targetUserId}?`)) {
+                return;
+            }
+
+            try {
+                const response = await apiCall('/admin/kills/reassign', {
+                    method: 'POST',
+                    body: JSON.stringify({ sourceUserId, targetUserId })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    errorMessage.textContent = data.message;
+                    errorMessage.style.display = 'block';
+                    return;
+                }
+
+                successMessage.textContent = `${data.killsReassigned} KILLS REASSIGNED FROM ${data.sourceUser} TO ${data.targetUser}`;
+                successMessage.style.display = 'block';
+
+                document.getElementById('sourceUserId').value = '';
+                document.getElementById('targetUserId').value = '';
+
+                loadStats();
+            } catch (error) {
+                console.error('Error reassigning kills:', error);
+                errorMessage.textContent = 'ERROR REASSIGNING KILLS';
+                errorMessage.style.display = 'block';
+            }
+        };
+
+        window.logout = function() {
+            sessionStorage.removeItem('adminToken');
+            sessionStorage.removeItem('adminUsername');
+            window.location.href = 'admin-login.html';
+        };
+
+        window.loadUsers = loadUsers;
+        window.loadAuditLogs = loadAuditLogs;
+
+        loadStats();
+        loadUsers();
+    </script>
+</body>
+</html>

@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ADMIN LOGIN - STAR TRACKER</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="auth.css">
+</head>
+<body>
+    <div class="main-container">
+        <!-- Header -->
+        <header class="header">
+            <h1>STAR CITIZEN TRACKER</h1>
+        </header>
+
+        <!-- Auth Container -->
+        <div class="auth-container">
+            <div class="auth-header">
+                <h2 style="color: #d05252;">ADMIN LOGIN</h2>
+                <p style="font-size: 11px; letter-spacing: 2px; opacity: 0.6; margin-top: 10px;">SYSTEM ADMINISTRATION ACCESS</p>
+            </div>
+
+            <form class="auth-form" id="adminLoginForm">
+                <div class="form-group">
+                    <label for="username" class="form-label">ADMIN USERNAME</label>
+                    <input 
+                        type="text" 
+                        id="username" 
+                        name="username" 
+                        class="form-input" 
+                        placeholder="ENTER ADMIN USERNAME"
+                        autocomplete="username"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="password" class="form-label">PASSWORD</label>
+                    <input 
+                        type="password" 
+                        id="password" 
+                        name="password" 
+                        class="form-input" 
+                        placeholder="ENTER PASSWORD"
+                        autocomplete="current-password"
+                        required
+                    >
+                </div>
+
+                <div class="form-message" id="formMessage"></div>
+
+                <button type="submit" class="auth-button" id="loginButton">
+                    <span id="buttonText">REQUEST ACCESS</span>
+                </button>
+            </form>
+
+            <div class="auth-footer">
+                <span class="auth-footer-text" style="color: #d05252;">⚠️ 2-FACTOR AUTHENTICATION REQUIRED</span>
+            </div>
+        </div>
+    </div>
+
+    <script src="config/api.js"></script>
+    <script>
+        // Redirect if already logged in
+        if (sessionStorage.getItem('adminToken')) {
+            window.location.href = 'admin.html';
+        }
+
+        document.getElementById('adminLoginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value;
+            const formMessage = document.getElementById('formMessage');
+            const buttonText = document.getElementById('buttonText');
+            const loginButton = document.getElementById('loginButton');
+
+            formMessage.textContent = '';
+            formMessage.className = 'form-message';
+
+            if (!username || !password) {
+                formMessage.textContent = 'USERNAME AND PASSWORD ARE REQUIRED';
+                formMessage.classList.add('error');
+                return;
+            }
+
+            loginButton.disabled = true;
+            buttonText.textContent = 'AUTHENTICATING...';
+
+            try {
+                const response = await fetch(`${API_CONFIG.BASE_URL}/api/admin/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username, password })
+                });
+
+                const data = await response.json();
+
+                console.log('Login response:', { status: response.status, data });
+
+                if (!response.ok) {
+                    formMessage.textContent = data.message?.toUpperCase() || 'AUTHENTICATION FAILED';
+                    formMessage.classList.add('error');
+                    loginButton.disabled = false;
+                    buttonText.textContent = 'REQUEST ACCESS';
+                    return;
+                }
+
+                formMessage.textContent = `VERIFICATION EMAIL SENT TO ${data.email}. CHECK YOUR EMAIL TO COMPLETE LOGIN.`;
+                formMessage.classList.add('success');
+                
+                // Clear form
+                document.getElementById('username').value = '';
+                document.getElementById('password').value = '';
+                
+                buttonText.textContent = 'EMAIL SENT ✓';
+
+            } catch (error) {
+                console.error('Login error:', error);
+                formMessage.textContent = 'SYSTEM ERROR. PLEASE TRY AGAIN';
+                formMessage.classList.add('error');
+                loginButton.disabled = false;
+                buttonText.textContent = 'REQUEST ACCESS';
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EMAIL VERIFICATION - STAR TRACKER</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="auth.css">
+</head>
+<body>
+    <div class="main-container">
+        <!-- Header -->
+        <header class="header">
+            <h1>STAR CITIZEN TRACKER</h1>
+        </header>
+
+        <!-- Auth Container -->
+        <div class="auth-container">
+            <div class="auth-header">
+                <h2>EMAIL VERIFICATION</h2>
+            </div>
+
+            <div class="verification-content">
+                <div class="verification-status" id="verificationStatus">
+                    <div class="loading-spinner"></div>
+                    <p>Verifying your email...</p>
+                </div>
+
+                <div class="form-message" id="verificationMessage"></div>
+
+                <div class="verification-actions" id="verificationActions" style="display: none;">
+                    <button class="auth-button" id="loginButton" onclick="goToLogin()">
+                        GO TO LOGIN
+                    </button>
+                    
+                    <div class="resend-section" id="resendSection" style="display: none;">
+                        <p class="resend-text">Verification link expired?</p>
+                        <input 
+                            type="email" 
+                            id="resendEmail" 
+                            class="form-input" 
+                            placeholder="ENTER YOUR EMAIL"
+                            style="margin-bottom: 15px;"
+                        >
+                        <button class="auth-button secondary" id="resendButton" onclick="resendVerification()">
+                            RESEND VERIFICATION EMAIL
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="auth-footer">
+                <a href="login.html" class="auth-link">BACK TO LOGIN</a>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .verification-content {
+            padding: 20px;
+            text-align: center;
+        }
+
+        .verification-status {
+            margin: 40px 0;
+        }
+
+        .loading-spinner {
+            border: 4px solid rgba(0, 255, 65, 0.1);
+            border-top: 4px solid #00ff41;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .verification-status p {
+            color: #00ff41;
+            font-size: 16px;
+            margin: 10px 0;
+        }
+
+        .verification-actions {
+            margin-top: 30px;
+        }
+
+        .auth-button.secondary {
+            background-color: transparent;
+            border: 2px solid #00ff41;
+            color: #00ff41;
+            margin-top: 10px;
+        }
+
+        .auth-button.secondary:hover {
+            background-color: rgba(0, 255, 65, 0.1);
+        }
+
+        .resend-section {
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 1px solid #333;
+        }
+
+        .resend-text {
+            color: #888;
+            margin-bottom: 15px;
+        }
+    </style>
+
+    <script src="config/api.js"></script>
+    <script>
+        async function verifyEmail() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const token = urlParams.get('token');
+            
+            const statusDiv = document.getElementById('verificationStatus');
+            const messageDiv = document.getElementById('verificationMessage');
+            const actionsDiv = document.getElementById('verificationActions');
+            const resendSection = document.getElementById('resendSection');
+            
+            if (!token) {
+                statusDiv.style.display = 'none';
+                showMessage(messageDiv, 'Please check your email for the verification link. Click the link in the email to verify your account.', 'error');
+                actionsDiv.style.display = 'block';
+                resendSection.style.display = 'block';
+                return;
+            }
+            
+            try {
+                const response = await fetch(getApiUrl(API_CONFIG.ENDPOINTS.AUTH.VERIFY_EMAIL), {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ token: token })
+                });
+                
+                const data = await response.json();
+                
+                statusDiv.style.display = 'none';
+                actionsDiv.style.display = 'block';
+                
+                if (response.ok) {
+                    if (data.alreadyVerified) {
+                        showMessage(messageDiv, 'Your email is already verified! You can log in.', 'success');
+                    } else {
+                        showMessage(messageDiv, 'Email verified successfully! You can now log in.', 'success');
+                    }
+                } else {
+                    if (data.expired) {
+                        showMessage(messageDiv, 'Verification link has expired. Please request a new one below.', 'error');
+                        resendSection.style.display = 'block';
+                    } else {
+                        showMessage(messageDiv, data.message || 'Verification failed. Please try again.', 'error');
+                        resendSection.style.display = 'block';
+                    }
+                }
+                
+            } catch (error) {
+                statusDiv.style.display = 'none';
+                actionsDiv.style.display = 'block';
+                showMessage(messageDiv, 'Network error. Please try again later.', 'error');
+                resendSection.style.display = 'block';
+            }
+        }
+        
+        async function resendVerification() {
+            const email = document.getElementById('resendEmail').value.trim();
+            const messageDiv = document.getElementById('verificationMessage');
+            const button = document.getElementById('resendButton');
+            
+            if (!email) {
+                showMessage(messageDiv, 'Please enter your email address', 'error');
+                return;
+            }
+            
+            button.disabled = true;
+            button.textContent = 'SENDING...';
+            
+            try {
+                const response = await fetch(getApiUrl(API_CONFIG.ENDPOINTS.AUTH.RESEND_VERIFICATION), {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email: email })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showMessage(messageDiv, data.message || 'Verification email sent! Please check your inbox.', 'success');
+                    document.getElementById('resendEmail').value = '';
+                } else {
+                    showMessage(messageDiv, data.message || 'Failed to send verification email.', 'error');
+                }
+                
+            } catch (error) {
+                showMessage(messageDiv, 'Network error. Please try again.', 'error');
+            } finally {
+                button.disabled = false;
+                button.textContent = 'RESEND VERIFICATION EMAIL';
+            }
+        }
+        
+        function goToLogin() {
+            window.location.href = 'login.html';
+        }
+        
+        function showMessage(element, text, type) {
+            element.textContent = text;
+            element.className = 'form-message show ' + type;
+        }
+        
+        // Auto-verify on page load
+        window.addEventListener('DOMContentLoaded', verifyEmail);
+    </script>
+</body>
+</html>

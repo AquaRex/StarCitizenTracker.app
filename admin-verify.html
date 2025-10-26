@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ADMIN VERIFICATION - STAR TRACKER</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="auth.css">
+</head>
+<body>
+    <div class="main-container">
+        <!-- Header -->
+        <header class="header">
+            <h1>STAR CITIZEN TRACKER</h1>
+        </header>
+
+        <!-- Auth Container -->
+        <div class="auth-container">
+            <div class="auth-header">
+                <h2 style="color: #d05252;">ADMIN VERIFICATION</h2>
+                <p style="font-size: 11px; letter-spacing: 2px; opacity: 0.6; margin-top: 10px;">VERIFYING ADMIN ACCESS...</p>
+            </div>
+
+            <div class="auth-form">
+                <div class="form-message" id="statusMessage">
+                    <div style="text-align: center; padding: 20px;">
+                        <div style="font-size: 14px; letter-spacing: 2px;">VERIFYING...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="config/api.js"></script>
+    <script>
+        async function verifyAdmin() {
+            const statusMessage = document.getElementById('statusMessage');
+            
+            // Get token from URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const token = urlParams.get('token');
+
+            if (!token) {
+                statusMessage.innerHTML = `
+                    <div style="text-align: center; padding: 20px;">
+                        <div style="font-size: 14px; letter-spacing: 2px; color: #d05252; margin-bottom: 20px;">
+                            ⚠️ INVALID VERIFICATION LINK
+                        </div>
+                        <div style="font-size: 12px; opacity: 0.7;">
+                            NO TOKEN PROVIDED. PLEASE USE THE LINK FROM YOUR EMAIL.
+                        </div>
+                    </div>
+                `;
+                statusMessage.classList.add('error');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_CONFIG.BASE_URL}/api/admin/verify-2fa`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ token })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    if (data.expired) {
+                        statusMessage.innerHTML = `
+                            <div style="text-align: center; padding: 20px;">
+                                <div style="font-size: 14px; letter-spacing: 2px; color: #d05252; margin-bottom: 20px;">
+                                    ⚠️ VERIFICATION EXPIRED
+                                </div>
+                                <div style="font-size: 12px; opacity: 0.7; margin-bottom: 20px;">
+                                    THIS VERIFICATION LINK HAS EXPIRED. PLEASE LOGIN AGAIN.
+                                </div>
+                                <a href="admin-login.html" class="auth-button" style="display: inline-block; text-decoration: none; padding: 15px 30px;">
+                                    RETURN TO LOGIN
+                                </a>
+                            </div>
+                        `;
+                    } else {
+                        statusMessage.innerHTML = `
+                            <div style="text-align: center; padding: 20px;">
+                                <div style="font-size: 14px; letter-spacing: 2px; color: #d05252; margin-bottom: 20px;">
+                                    ⚠️ VERIFICATION FAILED
+                                </div>
+                                <div style="font-size: 12px; opacity: 0.7; margin-bottom: 20px;">
+                                    ${data.message?.toUpperCase() || 'INVALID OR EXPIRED TOKEN'}
+                                </div>
+                                <a href="admin-login.html" class="auth-button" style="display: inline-block; text-decoration: none; padding: 15px 30px;">
+                                    RETURN TO LOGIN
+                                </a>
+                            </div>
+                        `;
+                    }
+                    statusMessage.classList.add('error');
+                    return;
+                }
+
+                // Store admin token
+                sessionStorage.setItem('adminToken', data.token);
+                sessionStorage.setItem('adminUsername', data.username);
+
+                statusMessage.innerHTML = `
+                    <div style="text-align: center; padding: 20px;">
+                        <div style="font-size: 14px; letter-spacing: 2px; color: #52d075; margin-bottom: 20px;">
+                            ✓ VERIFICATION SUCCESSFUL
+                        </div>
+                        <div style="font-size: 12px; opacity: 0.7; margin-bottom: 20px;">
+                            ACCESS GRANTED. REDIRECTING TO ADMIN PANEL...
+                        </div>
+                    </div>
+                `;
+                statusMessage.classList.add('success');
+
+                // Redirect to admin panel after 2 seconds
+                setTimeout(() => {
+                    window.location.href = 'admin.html';
+                }, 2000);
+
+            } catch (error) {
+                console.error('Verification error:', error);
+                statusMessage.innerHTML = `
+                    <div style="text-align: center; padding: 20px;">
+                        <div style="font-size: 14px; letter-spacing: 2px; color: #d05252; margin-bottom: 20px;">
+                            ⚠️ SYSTEM ERROR
+                        </div>
+                        <div style="font-size: 12px; opacity: 0.7; margin-bottom: 20px;">
+                            UNABLE TO VERIFY. PLEASE TRY AGAIN.
+                        </div>
+                        <a href="admin-login.html" class="auth-button" style="display: inline-block; text-decoration: none; padding: 15px 30px;">
+                            RETURN TO LOGIN
+                        </a>
+                    </div>
+                `;
+                statusMessage.classList.add('error');
+            }
+        }
+
+        // Start verification on page load
+        verifyAdmin();
+    </script>
+</body>
+</html>

@@ -8,7 +8,9 @@ const API_CONFIG = {
             LOGIN: '/api/auth/login',
             REGISTER: '/api/auth/register',
             VALIDATE: '/api/auth/validate',
-            UPDATE_SETTINGS: '/api/auth/update-settings'
+            UPDATE_SETTINGS: '/api/auth/update-settings',
+            VERIFY_EMAIL: '/api/auth/verify-email',
+            RESEND_VERIFICATION: '/api/auth/resend-verification'
         },
         KILLS: '/api/kills',
         PROFILES: '/api/profiles',
