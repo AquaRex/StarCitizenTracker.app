@@ -5,16 +5,48 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ADMIN PANEL - STAR TRACKER</title>
     <link rel="stylesheet" href="styles.css">
+    <style>
+        .admin-header {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 25px 40px;
+            border: 2px solid #18140c;
+            margin-bottom: 40px;
+        }
+
+        .admin-header h1 {
+            font-size: 24px;
+            font-weight: 300;
+            letter-spacing: 8px;
+            text-transform: uppercase;
+        }
+
+        .admin-user-info {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 11px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .admin-actions {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+    </style>
 </head>
 <body>
     <div class="main-container">
-        <!-- Top Navigation -->
-        <div class="top-nav">
-            <div class="nav-logo">
-                <span class="logo-text">ADMIN PANEL</span>
+        <div class="admin-header">
+            <h1>ADMIN PANEL</h1>
+            <div class="admin-user-info">
+                <span id="adminUsername">ADMIN</span>
             </div>
-            <div style="display: flex; gap: 15px; align-items: center;">
-                <span class="logo-text" id="adminUsername" style="font-size: 11px;">ADMIN</span>
+            <div class="admin-actions">
                 <button class="btn btn-icon" id="darkModeToggle" title="Toggle Dark Mode">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <circle cx="12" cy="12" r="5"></circle>
@@ -43,32 +75,32 @@
             <div class="main-stats" style="border-bottom: none;">
                 <div class="stat-box" id="totalUsers">
                     <div class="stat-label">TOTAL USERS</div>
-                    <div class="stat-value">-</div>
+                    <div class="stat-value">142</div>
                 </div>
                 <div class="stat-box" id="verifiedUsers">
                     <div class="stat-label">VERIFIED</div>
-                    <div class="stat-value">-</div>
+                    <div class="stat-value">98</div>
                 </div>
                 <div class="stat-box" id="totalKills">
                     <div class="stat-label">TOTAL KILLS</div>
-                    <div class="stat-value">-</div>
+                    <div class="stat-value">3847</div>
                 </div>
                 <div class="stat-box" id="adminLogins">
                     <div class="stat-label">ADMIN LOGINS</div>
-                    <div class="stat-value">-</div>
+                    <div class="stat-value">27</div>
                 </div>
             </div>
         </div>
 
-        <!-- View Buttons -->
+        <!-- View Buttons (Tabs) -->
         <div class="view-buttons">
-            <button class="view-btn active" onclick="switchTab('users', event)">USERS</button>
-            <button class="view-btn" onclick="switchTab('audit', event)">AUDIT LOGS</button>
-            <button class="view-btn" onclick="switchTab('tools', event)">TOOLS</button>
+            <button class="view-btn active" onclick="switchTab('users')">USERS</button>
+            <button class="view-btn" onclick="switchTab('audit')">AUDIT LOGS</button>
+            <button class="view-btn" onclick="switchTab('tools')">TOOLS</button>
         </div>
 
         <!-- Users Tab -->
-        <div id="usersTab">
+        <div id="usersTab" style="display: block;">
             <!-- Search and Filter Panel -->
             <div class="filter-panel">
                 <div class="filter-row">
@@ -95,20 +127,47 @@
                             <div class="select-option" data-value="username">USERNAME A-Z</div>
                         </div>
                     </div>
-                    <button class="reset-filter-btn" onclick="resetFilters()" style="width: 100%;">RESET FILTERS</button>
+                    <button class="reset-filter-btn" onclick="resetFilters()">RESET FILTERS</button>
                 </div>
             </div>
 
-            <!-- Content Area -->
             <div class="content-area" id="usersContent">
-                <div class="no-data" style="text-align: center; padding: 40px; font-size: 12px; letter-spacing: 2px; text-transform: uppercase;">LOADING USERS...</div>
             </div>
         </div>
 
         <!-- Audit Logs Tab -->
         <div id="auditTab" style="display: none;">
-            <div class="content-area" id="auditContent" style="min-height: 400px;">
-                <div class="no-data" style="text-align: center; padding: 40px; font-size: 12px; letter-spacing: 2px; text-transform: uppercase;">LOADING AUDIT LOGS...</div>
+            <div class="content-area" id="auditContent">
+                <div class="kill-entry">
+                    <div class="kill-players">
+                        <span class="player-name">AquaRex</span>
+                        <span class="meta-item" style="margin-left: 20px;">USER_DELETE</span>
+                    </div>
+                    <div class="kill-meta">
+                        <span class="meta-item">Deleted user ID: 42</span>
+                        <span class="kill-time">10/25/2025, 14:32:15</span>
+                    </div>
+                </div>
+                <div class="kill-entry">
+                    <div class="kill-players">
+                        <span class="player-name">AquaRex</span>
+                        <span class="meta-item" style="margin-left: 20px;">KILL_REASSIGN</span>
+                    </div>
+                    <div class="kill-meta">
+                        <span class="meta-item">Reassigned 15 kills from user 5 to user 2</span>
+                        <span class="kill-time">10/24/2025, 09:18:42</span>
+                    </div>
+                </div>
+                <div class="kill-entry">
+                    <div class="kill-players">
+                        <span class="player-name">AquaRex</span>
+                        <span class="meta-item" style="margin-left: 20px;">LOGIN</span>
+                    </div>
+                    <div class="kill-meta">
+                        <span class="meta-item">Successful 2FA login</span>
+                        <span class="kill-time">10/24/2025, 08:45:22</span>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -134,67 +193,39 @@
         </div>
     </div>
 
-    <script src="config/api.js"></script>
     <script>
-        let allUsers = [];
-        let filteredUsers = [];
+        // Sample user data (25 users)
+        const allUsers = [
+            { id: 1, username: 'AquaRex', inGameName: 'AquaRex', kills: 247, verified: true, created: '10/15/2025' },
+            { id: 2, username: 'SpacePirate', inGameName: 'SpacePirate', kills: 189, verified: true, created: '10/12/2025' },
+            { id: 3, username: 'NoobSlayer', inGameName: '', kills: 142, verified: false, created: '10/10/2025' },
+            { id: 4, username: 'StarHunter', inGameName: 'StarHunter', kills: 312, verified: true, created: '10/08/2025' },
+            { id: 5, username: 'GhostRider', inGameName: 'GhostRider', kills: 98, verified: true, created: '10/05/2025' },
+            { id: 6, username: 'CrimsonWolf', inGameName: 'CrimsonWolf', kills: 215, verified: true, created: '10/04/2025' },
+            { id: 7, username: 'ShadowStrike', inGameName: '', kills: 67, verified: false, created: '10/03/2025' },
+            { id: 8, username: 'NovaBlade', inGameName: 'NovaBlade', kills: 178, verified: true, created: '10/02/2025' },
+            { id: 9, username: 'VoidWalker', inGameName: 'VoidWalker', kills: 293, verified: true, created: '10/01/2025' },
+            { id: 10, username: 'PhantomAce', inGameName: 'PhantomAce', kills: 156, verified: true, created: '09/30/2025' },
+            { id: 11, username: 'ThunderFox', inGameName: '', kills: 89, verified: false, created: '09/29/2025' },
+            { id: 12, username: 'IronKnight', inGameName: 'IronKnight', kills: 234, verified: true, created: '09/28/2025' },
+            { id: 13, username: 'CosmicReaper', inGameName: 'CosmicReaper', kills: 401, verified: true, created: '09/27/2025' },
+            { id: 14, username: 'SolarFlare', inGameName: 'SolarFlare', kills: 167, verified: true, created: '09/26/2025' },
+            { id: 15, username: 'DarkMatter', inGameName: '', kills: 45, verified: false, created: '09/25/2025' },
+            { id: 16, username: 'NeonHawk', inGameName: 'NeonHawk', kills: 298, verified: true, created: '09/24/2025' },
+            { id: 17, username: 'FrostByte', inGameName: 'FrostByte', kills: 187, verified: true, created: '09/23/2025' },
+            { id: 18, username: 'VenomStrike', inGameName: '', kills: 123, verified: false, created: '09/22/2025' },
+            { id: 19, username: 'BlazeFury', inGameName: 'BlazeFury', kills: 276, verified: true, created: '09/21/2025' },
+            { id: 20, username: 'SkyRaider', inGameName: 'SkyRaider', kills: 209, verified: true, created: '09/20/2025' },
+            { id: 21, username: 'QuantumShift', inGameName: 'QuantumShift', kills: 154, verified: true, created: '09/19/2025' },
+            { id: 22, username: 'StormBreaker', inGameName: '', kills: 78, verified: false, created: '09/18/2025' },
+            { id: 23, username: 'EclipseWing', inGameName: 'EclipseWing', kills: 341, verified: true, created: '09/17/2025' },
+            { id: 24, username: 'TitanForce', inGameName: 'TitanForce', kills: 265, verified: true, created: '09/16/2025' },
+            { id: 25, username: 'VortexRider', inGameName: 'VortexRider', kills: 198, verified: true, created: '09/15/2025' }
+        ];
+
+        let currentPage = 1;
+        let filteredUsers = [...allUsers];
         let expandedUserId = null;
-        const token = localStorage.getItem('adminToken');
-
-        // Check authentication
-        if (!token) {
-            window.location.href = 'admin-login.html';
-        }
-
-        // API call helper
-        async function apiCall(endpoint, options = {}) {
-            const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-                ...options,
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`,
-                    ...options.headers
-                }
-            });
-
-            if (response.status === 401) {
-                localStorage.removeItem('adminToken');
-                window.location.href = 'admin-login.html';
-                return null;
-            }
-
-            if (!response.ok) {
-                const error = await response.text();
-                throw new Error(error || 'API request failed');
-            }
-
-            return response.json();
-        }
-
-        // Load stats
-        async function loadStats() {
-            try {
-                const stats = await apiCall('/api/Admin/stats');
-                document.querySelector('#totalUsers .stat-value').textContent = stats.totalUsers || 0;
-                document.querySelector('#verifiedUsers .stat-value').textContent = stats.verifiedUsers || 0;
-                document.querySelector('#totalKills .stat-value').textContent = stats.totalKills || 0;
-                document.querySelector('#adminLogins .stat-value').textContent = stats.adminLogins || 0;
-            } catch (error) {
-                console.error('Failed to load stats:', error);
-            }
-        }
-
-        // Load users
-        async function loadUsers() {
-            try {
-                allUsers = await apiCall('/api/Admin/users');
-                filteredUsers = [...allUsers];
-                renderUsers();
-            } catch (error) {
-                console.error('Failed to load users:', error);
-                document.getElementById('usersContent').innerHTML = '<div class="error" style="text-align: center; padding: 40px;">FAILED TO LOAD USERS</div>';
-            }
-        }
 
         function renderUsers() {
             if (filteredUsers.length === 0) {
@@ -206,14 +237,14 @@
                 <div class="user-item" id="user-${user.id}" style="border-bottom: 2px solid #18140c;">
                     <div class="kill-entry" onclick="toggleUserDetails(${user.id})" style="cursor: pointer; border-bottom: none;">
                         <div class="kill-players">
-                            <span class="player-name" style="font-weight: 500;">${user.username || 'Unknown'}</span>
+                            <span class="player-name" style="font-weight: 500;">${user.username}</span>
                             <span class="meta-item" style="margin-left: 20px;">ID: ${user.id}</span>
-                            ${user.isPublicProfile ? '<span class="meta-item" style="color: #52d075;">✓ VERIFIED</span>' : '<span class="meta-item" style="color: #d05252;">✗ NOT VERIFIED</span>'}
+                            ${user.verified ? '<span class="meta-item" style="color: #52d075;">✓ VERIFIED</span>' : '<span class="meta-item" style="color: #d05252;">✗ NOT VERIFIED</span>'}
                         </div>
                         <div class="kill-meta">
-                            <span class="meta-item">${user.totalKills || 0} KILLS</span>
+                            <span class="meta-item">${user.kills} KILLS</span>
                             <span class="meta-item">${user.inGameName || 'NO IN-GAME NAME'}</span>
-                            <span class="kill-time">${new Date(user.createdAt).toLocaleDateString()}</span>
+                            <span class="kill-time">${user.created}</span>
                         </div>
                     </div>
                     <div class="user-details" id="details-${user.id}" style="display: none; border: 2px solid #18140c; margin: 40px;">
@@ -224,7 +255,7 @@
                             </div>
                             <div>
                                 <div style="font-size: 10px; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 8px; opacity: 0.7;">USERNAME</div>
-                                <div style="font-size: 14px;">${user.username || 'N/A'}</div>
+                                <div style="font-size: 14px;">${user.username}</div>
                             </div>
                             <div>
                                 <div style="font-size: 10px; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 8px; opacity: 0.7;">IN-GAME NAME</div>
@@ -232,30 +263,30 @@
                             </div>
                             <div>
                                 <div style="font-size: 10px; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 8px; opacity: 0.7;">EMAIL</div>
-                                <div style="font-size: 14px;">${user.email || 'N/A'}</div>
+                                <div style="font-size: 14px;">${user.username.toLowerCase()}@example.com</div>
                             </div>
                             <div>
                                 <div style="font-size: 10px; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 8px; opacity: 0.7;">VERIFIED</div>
-                                <div style="font-size: 14px;">${user.isPublicProfile ? 'YES' : 'NO'}</div>
+                                <div style="font-size: 14px;">${user.verified ? 'YES' : 'NO'}</div>
                             </div>
                             <div>
                                 <div style="font-size: 10px; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 8px; opacity: 0.7;">TOTAL KILLS</div>
-                                <div style="font-size: 14px;">${user.totalKills || 0}</div>
+                                <div style="font-size: 14px;">${user.kills}</div>
                             </div>
                             <div>
                                 <div style="font-size: 10px; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 8px; opacity: 0.7;">CREATED</div>
-                                <div style="font-size: 14px;">${new Date(user.createdAt).toLocaleDateString()}</div>
+                                <div style="font-size: 14px;">${user.created}</div>
                             </div>
                             <div>
                                 <div style="font-size: 10px; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 8px; opacity: 0.7;">LAST LOGIN</div>
-                                <div style="font-size: 14px;">${user.lastLoginAt ? new Date(user.lastLoginAt).toLocaleDateString() : 'Never'}</div>
+                                <div style="font-size: 14px;">10/25/2025</div>
                             </div>
                         </div>
                         <div style="padding: 40px; padding-top: 0;">
                             <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; border: 2px solid #18140c;">
                                 <button class="view-btn" style="background: #d05252; border-color: #d05252; color: #aba9a2; border-radius: 0; border-right: 2px solid #18140c; border-top: none; border-bottom: none; border-left: none;" onclick="deleteUser(${user.id})">DELETE USER</button>
                                 <button class="view-btn" style="border-radius: 0; border-right: 2px solid #18140c; border-top: none; border-bottom: none; border-left: none;" onclick="resetPassword(${user.id})">RESET PASSWORD</button>
-                                <button class="view-btn" style="border-radius: 0; border: none;" onclick="toggleVerification(${user.id})">${user.isPublicProfile ? 'UNVERIFY' : 'VERIFY'} USER</button>
+                                <button class="view-btn" style="border-radius: 0; border: none;" onclick="toggleVerification(${user.id})">${user.verified ? 'UNVERIFY' : 'VERIFY'} USER</button>
                             </div>
                         </div>
                     </div>
@@ -268,62 +299,36 @@
         function toggleUserDetails(userId) {
             const detailsElement = document.getElementById(`details-${userId}`);
             
+            // If clicking the same user, just toggle
             if (expandedUserId === userId) {
                 detailsElement.style.display = 'none';
                 expandedUserId = null;
             } else {
+                // Close previously expanded user
                 if (expandedUserId !== null) {
                     const previousDetails = document.getElementById(`details-${expandedUserId}`);
                     if (previousDetails) {
                         previousDetails.style.display = 'none';
                     }
                 }
+                // Open clicked user
                 detailsElement.style.display = 'block';
                 expandedUserId = userId;
             }
         }
 
-        async function deleteUser(userId) {
+        function deleteUser(userId) {
             if (confirm('Are you sure you want to delete this user? This action cannot be undone.')) {
-                try {
-                    await apiCall(`/api/Admin/users/${userId}`, { method: 'DELETE' });
-                    alert('User deleted successfully');
-                    await loadUsers();
-                    await loadStats();
-                } catch (error) {
-                    alert('Failed to delete user: ' + error.message);
-                }
+                alert(`DELETE USER ${userId} - This would call the API`);
             }
         }
 
-        async function resetPassword(userId) {
-            if (confirm('Send password reset email to this user?')) {
-                try {
-                    await apiCall(`/api/Admin/users/${userId}/reset-password`, { method: 'POST' });
-                    alert('Password reset email sent successfully');
-                } catch (error) {
-                    alert('Failed to send password reset: ' + error.message);
-                }
-            }
+        function resetPassword(userId) {
+            alert(`RESET PASSWORD for user ${userId} - This would send a password reset email`);
         }
 
-        async function toggleVerification(userId) {
-            const user = allUsers.find(u => u.id === userId);
-            const action = user.isPublicProfile ? 'unverify' : 'verify';
-            
-            if (confirm(`${action.toUpperCase()} this user?`)) {
-                try {
-                    await apiCall(`/api/Admin/users/${userId}/verification`, {
-                        method: 'PUT',
-                        body: JSON.stringify({ isPublicProfile: !user.isPublicProfile })
-                    });
-                    alert(`User ${action}ed successfully`);
-                    await loadUsers();
-                    await loadStats();
-                } catch (error) {
-                    alert(`Failed to ${action} user: ` + error.message);
-                }
-            }
+        function toggleVerification(userId) {
+            alert(`TOGGLE VERIFICATION for user ${userId} - This would update the verification status`);
         }
 
         function filterUsers() {
@@ -331,15 +336,16 @@
             const verificationFilterValue = document.querySelector('#verificationFilter .select-display').getAttribute('data-value') || 'all';
             const sortFilter = document.querySelector('#sortFilter .select-display').getAttribute('data-value') || 'newest';
 
+            // Filter by search term
             filteredUsers = allUsers.filter(user => {
                 const matchesSearch = searchTerm === '' || 
-                    (user.username && user.username.toLowerCase().includes(searchTerm)) || 
-                    (user.inGameName && user.inGameName.toLowerCase().includes(searchTerm));
+                    user.username.toLowerCase().includes(searchTerm) || 
+                    user.inGameName.toLowerCase().includes(searchTerm);
                 
                 const matchesVerification = 
                     verificationFilterValue === 'all' ||
-                    (verificationFilterValue === 'verified' && user.isPublicProfile) ||
-                    (verificationFilterValue === 'unverified' && !user.isPublicProfile);
+                    (verificationFilterValue === 'verified' && user.verified) ||
+                    (verificationFilterValue === 'unverified' && !user.verified);
 
                 return matchesSearch && matchesVerification;
             });
@@ -347,45 +353,40 @@
             // Sort users
             switch(sortFilter) {
                 case 'oldest':
-                    filteredUsers.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+                    filteredUsers.sort((a, b) => new Date(a.created) - new Date(b.created));
                     break;
                 case 'kills-high':
-                    filteredUsers.sort((a, b) => (b.totalKills || 0) - (a.totalKills || 0));
+                    filteredUsers.sort((a, b) => b.kills - a.kills);
                     break;
                 case 'kills-low':
-                    filteredUsers.sort((a, b) => (a.totalKills || 0) - (b.totalKills || 0));
+                    filteredUsers.sort((a, b) => a.kills - b.kills);
                     break;
                 case 'username':
-                    filteredUsers.sort((a, b) => (a.username || '').localeCompare(b.username || ''));
+                    filteredUsers.sort((a, b) => a.username.localeCompare(b.username));
                     break;
                 case 'newest':
                 default:
-                    filteredUsers.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                    filteredUsers.sort((a, b) => new Date(b.created) - new Date(a.created));
                     break;
             }
 
             renderUsers();
         }
 
-        // Custom select dropdown functionality
-        document.addEventListener('click', (e) => {
-            const select = e.target.closest('.custom-select');
-            if (select) {
+        // Custom select functionality
+        document.querySelectorAll('.custom-select').forEach(select => {
+            const display = select.querySelector('.select-display');
+            const options = select.querySelector('.select-options');
+            
+            display.addEventListener('click', (e) => {
                 e.stopPropagation();
                 document.querySelectorAll('.custom-select').forEach(s => {
                     if (s !== select) s.classList.remove('open');
                 });
                 select.classList.toggle('open');
-            } else {
-                document.querySelectorAll('.custom-select').forEach(s => s.classList.remove('open'));
-            }
-        });
+            });
 
-        document.querySelectorAll('.custom-select').forEach(select => {
-            const display = select.querySelector('.select-display');
-            const options = select.querySelectorAll('.select-option');
-            
-            options.forEach(option => {
+            select.querySelectorAll('.select-option').forEach(option => {
                 option.addEventListener('click', (e) => {
                     e.stopPropagation();
                     display.textContent = option.textContent;
@@ -394,6 +395,10 @@
                     filterUsers();
                 });
             });
+        });
+
+        document.addEventListener('click', () => {
+            document.querySelectorAll('.custom-select').forEach(s => s.classList.remove('open'));
         });
 
         function resetFilters() {
@@ -405,49 +410,27 @@
             filterUsers();
         }
 
-        function switchTab(tabName, event) {
+        function switchTab(tabName) {
+            // Hide all tabs
             document.getElementById('usersTab').style.display = 'none';
             document.getElementById('auditTab').style.display = 'none';
             document.getElementById('toolsTab').style.display = 'none';
 
+            // Remove active class from all buttons
             document.querySelectorAll('.view-btn').forEach(btn => btn.classList.remove('active'));
 
+            // Show selected tab
             document.getElementById(`${tabName}Tab`).style.display = 'block';
+
+            // Add active class to clicked button
             event.target.classList.add('active');
-
-            if (tabName === 'audit' && document.getElementById('auditContent').innerHTML.includes('LOADING')) {
-                loadAuditLogs();
-            }
         }
 
-        async function loadAuditLogs() {
-            try {
-                const logs = await apiCall('/api/Admin/audit-logs');
-                if (logs.length === 0) {
-                    document.getElementById('auditContent').innerHTML = '<div class="no-data" style="text-align: center; padding: 40px;">NO AUDIT LOGS FOUND</div>';
-                    return;
-                }
-
-                const logsHtml = logs.map(log => `
-                    <div class="kill-entry">
-                        <div class="kill-players">
-                            <span class="player-name">${log.action}</span>
-                            <span class="meta-item">BY: ${log.adminUsername}</span>
-                        </div>
-                        <div class="kill-meta">
-                            <span class="meta-item">${log.details || ''}</span>
-                            <span class="kill-time">${new Date(log.timestamp).toLocaleString()}</span>
-                        </div>
-                    </div>
-                `).join('');
-
-                document.getElementById('auditContent').innerHTML = logsHtml;
-            } catch (error) {
-                document.getElementById('auditContent').innerHTML = '<div class="error" style="text-align: center; padding: 40px;">FAILED TO LOAD AUDIT LOGS</div>';
-            }
+        function logout() {
+            alert('LOGOUT CLICKED');
         }
 
-        async function reassignKills() {
+        function reassignKills() {
             const sourceUserId = document.getElementById('sourceUserId').value;
             const targetUserId = document.getElementById('targetUserId').value;
             const messageBox = document.getElementById('toolsMessage');
@@ -458,90 +441,54 @@
                 return;
             }
 
-            try {
-                const result = await apiCall('/api/Admin/reassign-kills', {
-                    method: 'POST',
-                    body: JSON.stringify({
-                        sourceUserId: parseInt(sourceUserId),
-                        targetUserId: parseInt(targetUserId)
-                    })
-                });
+            messageBox.textContent = `SUCCESS: 15 KILLS REASSIGNED FROM USER ${sourceUserId} TO USER ${targetUserId}`;
+            messageBox.style.color = '#52d075';
 
-                messageBox.textContent = `SUCCESS: ${result.killsReassigned} KILLS REASSIGNED FROM USER ${sourceUserId} TO USER ${targetUserId}`;
-                messageBox.style.color = '#52d075';
-
-                document.getElementById('sourceUserId').value = '';
-                document.getElementById('targetUserId').value = '';
-                
-                await loadUsers();
-                await loadStats();
-
-                setTimeout(() => {
-                    messageBox.textContent = 'KILL REASSIGNMENT';
-                    messageBox.style.color = '';
-                }, 3000);
-            } catch (error) {
-                messageBox.textContent = 'ERROR: ' + error.message.toUpperCase();
-                messageBox.style.color = '#d05252';
-            }
+            document.getElementById('sourceUserId').value = '';
+            document.getElementById('targetUserId').value = '';
+            
+            // Reset message after 3 seconds
+            setTimeout(() => {
+                messageBox.textContent = 'KILL REASSIGNMENT';
+                messageBox.style.color = '';
+            }, 3000);
         }
 
-        async function clearUserDatabase() {
+        function clearUserDatabase() {
             if (confirm('WARNING: This will permanently delete ALL users from the database. This action cannot be undone. Are you absolutely sure?')) {
                 if (confirm('FINAL CONFIRMATION: Delete all users?')) {
-                    try {
-                        await apiCall('/api/Admin/users/clear', { method: 'DELETE' });
-                        alert('User database cleared successfully');
-                        await loadUsers();
-                        await loadStats();
-                    } catch (error) {
-                        alert('Failed to clear user database: ' + error.message);
-                    }
+                    alert('CLEAR USER DATABASE - This would call the API to delete all user records');
+                    // API call would go here: DELETE /api/Admin/users/clear
                 }
             }
         }
 
-        async function clearKillsDatabase() {
+        function clearKillsDatabase() {
             if (confirm('WARNING: This will permanently delete ALL kills from the database. This action cannot be undone. Are you absolutely sure?')) {
                 if (confirm('FINAL CONFIRMATION: Delete all kills?')) {
-                    try {
-                        await apiCall('/api/Admin/kills/clear', { method: 'DELETE' });
-                        alert('Kills database cleared successfully');
-                        await loadUsers();
-                        await loadStats();
-                    } catch (error) {
-                        alert('Failed to clear kills database: ' + error.message);
-                    }
+                    alert('CLEAR KILLS DATABASE - This would call the API to delete all kill records');
+                    // API call would go here: DELETE /api/Admin/kills/clear
                 }
             }
         }
 
-        function logout() {
-            if (confirm('Logout from admin panel?')) {
-                localStorage.removeItem('adminToken');
-                window.location.href = 'admin-login.html';
-            }
-        }
-
+        // Dark mode toggle
         function toggleDarkMode() {
             document.body.classList.toggle('dark-mode');
-            if (document.body.classList.contains('dark-mode')) {
-                localStorage.setItem('darkMode', 'enabled');
-            } else {
-                localStorage.removeItem('darkMode');
-            }
+            const isDark = document.body.classList.contains('dark-mode');
+            localStorage.setItem('darkMode', isDark ? 'enabled' : 'disabled');
         }
 
-        // Initialize
+        // Initialize dark mode from localStorage
         if (localStorage.getItem('darkMode') === 'enabled') {
             document.body.classList.add('dark-mode');
         }
 
+        // Add dark mode toggle event listener
         document.getElementById('darkModeToggle').addEventListener('click', toggleDarkMode);
 
-        // Load initial data
-        loadStats();
-        loadUsers();
+        // Initial render
+        renderUsers();
     </script>
 </body>
 </html>
