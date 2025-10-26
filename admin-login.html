@@ -68,67 +68,71 @@
             window.location.href = 'admin.html';
         }
 
-        document.getElementById('adminLoginForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-
+        async function handleLogin(event) {
+            event.preventDefault();
+            
             const username = document.getElementById('username').value.trim();
             const password = document.getElementById('password').value;
-            const formMessage = document.getElementById('formMessage');
+            const button = document.getElementById('loginButton');
             const buttonText = document.getElementById('buttonText');
-            const loginButton = document.getElementById('loginButton');
-
-            formMessage.textContent = '';
-            formMessage.className = 'form-message';
-
+            const messageDiv = document.getElementById('formMessage');
+            
+            messageDiv.textContent = '';
+            messageDiv.className = 'form-message';
+            
             if (!username || !password) {
-                formMessage.textContent = 'USERNAME AND PASSWORD ARE REQUIRED';
-                formMessage.classList.add('error');
+                messageDiv.textContent = 'USERNAME AND PASSWORD ARE REQUIRED';
+                messageDiv.classList.add('error');
                 return;
             }
-
-            loginButton.disabled = true;
+            
+            button.disabled = true;
             buttonText.textContent = 'AUTHENTICATING...';
-
+            
             try {
                 const response = await fetch(`${API_CONFIG.BASE_URL}/api/Admin/login`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ username, password })
+                    body: JSON.stringify({
+                        username: username,
+                        password: password
+                    })
                 });
-
+                
                 const data = await response.json();
-
-                if (!response.ok) {
-                    formMessage.textContent = data.message?.toUpperCase() || 'INVALID CREDENTIALS';
-                    formMessage.classList.add('error');
-                    loginButton.disabled = false;
+                
+                if (response.ok && data.token) {
+                    // Store token and username - EXACT same as regular login
+                    localStorage.setItem('adminToken', data.token);
+                    localStorage.setItem('adminUsername', data.username);
+                    
+                    messageDiv.textContent = 'LOGIN SUCCESSFUL! REDIRECTING...';
+                    messageDiv.classList.add('success');
+                    
+                    // Redirect to admin panel
+                    setTimeout(() => {
+                        window.location.href = 'admin.html';
+                    }, 500);
+                    
+                } else {
+                    messageDiv.textContent = (data.message || 'INVALID CREDENTIALS').toUpperCase();
+                    messageDiv.classList.add('error');
+                    button.disabled = false;
                     buttonText.textContent = 'LOGIN';
-                    return;
                 }
-
-                // Store token and redirect
-                localStorage.setItem('adminToken', data.token);
-                localStorage.setItem('adminUsername', username);
                 
-                formMessage.textContent = 'LOGIN SUCCESSFUL';
-                formMessage.classList.add('success');
-                buttonText.textContent = 'SUCCESS ✓';
-                
-                // Redirect to admin panel
-                setTimeout(() => {
-                    window.location.href = 'admin.html';
-                }, 500);
-
             } catch (error) {
                 console.error('Login error:', error);
-                formMessage.textContent = 'CONNECTION ERROR. PLEASE TRY AGAIN';
-                formMessage.classList.add('error');
-                loginButton.disabled = false;
+                messageDiv.textContent = 'CONNECTION ERROR. PLEASE TRY AGAIN';
+                messageDiv.classList.add('error');
+                button.disabled = false;
                 buttonText.textContent = 'LOGIN';
             }
-        });
+        }
+
+        document.getElementById('adminLoginForm').addEventListener('submit', handleLogin);
     </script>
 </body>
 </html>
