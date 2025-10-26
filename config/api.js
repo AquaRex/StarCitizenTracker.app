@@ -10,7 +10,11 @@ const API_CONFIG = {
             VALIDATE: '/api/auth/validate',
             UPDATE_SETTINGS: '/api/auth/update-settings',
             VERIFY_EMAIL: '/api/auth/verify-email',
-            RESEND_VERIFICATION: '/api/auth/resend-verification'
+            RESEND_VERIFICATION: '/api/auth/resend-verification',
+            FORGOT_PASSWORD: '/api/auth/forgot-password',
+            RESET_PASSWORD: '/api/auth/reset-password',
+            CHANGE_PASSWORD: '/api/auth/change-password',
+            UPDATE_PROFILE: '/api/auth/update-profile'
         },
         KILLS: '/api/kills',
         PROFILES: '/api/profiles',

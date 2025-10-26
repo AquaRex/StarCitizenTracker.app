@@ -27,6 +27,16 @@ window.addEventListener('DOMContentLoaded', () => {
     // Save button handler
     document.getElementById('saveBtn').addEventListener('click', saveSettings);
     
+    // Password change handlers
+    document.getElementById('changePasswordBtn').addEventListener('click', openPasswordModal);
+    document.getElementById('cancelPasswordBtn').addEventListener('click', closePasswordModal);
+    document.getElementById('savePasswordBtn').addEventListener('click', changePassword);
+    
+    // In-game name change handlers
+    document.getElementById('editInGameNameBtn').addEventListener('click', openInGameNameModal);
+    document.getElementById('cancelInGameNameBtn').addEventListener('click', closeInGameNameModal);
+    document.getElementById('saveInGameNameBtn').addEventListener('click', updateInGameName);
+    
     // Close dropdown when clicking outside
     document.addEventListener('click', (e) => {
         if (!e.target.closest('.nav-account')) {
@@ -168,3 +178,147 @@ function initAccountDropdown() {
         });
     }
 }
+
+// Password Modal Functions
+function openPasswordModal() {
+    document.getElementById('passwordModal').style.display = 'flex';
+    document.getElementById('currentPassword').value = '';
+    document.getElementById('newPassword').value = '';
+    document.getElementById('confirmNewPassword').value = '';
+    hideMessage(document.getElementById('passwordMessage'));
+}
+
+function closePasswordModal() {
+    document.getElementById('passwordModal').style.display = 'none';
+}
+
+async function changePassword() {
+    const currentPassword = document.getElementById('currentPassword').value;
+    const newPassword = document.getElementById('newPassword').value;
+    const confirmNewPassword = document.getElementById('confirmNewPassword').value;
+    const messageDiv = document.getElementById('passwordMessage');
+    const saveBtn = document.getElementById('savePasswordBtn');
+    
+    hideMessage(messageDiv);
+    
+    if (!currentPassword || !newPassword || !confirmNewPassword) {
+        showMessage(messageDiv, 'Please fill in all fields', 'error');
+        return;
+    }
+    
+    if (newPassword.length < 6) {
+        showMessage(messageDiv, 'New password must be at least 6 characters', 'error');
+        return;
+    }
+    
+    if (newPassword !== confirmNewPassword) {
+        showMessage(messageDiv, 'New passwords do not match', 'error');
+        return;
+    }
+    
+    saveBtn.disabled = true;
+    saveBtn.textContent = 'CHANGING...';
+    
+    try {
+        const response = await makeSecureApiRequest(API_CONFIG.ENDPOINTS.AUTH.CHANGE_PASSWORD, {
+            method: 'POST',
+            body: JSON.stringify({
+                currentPassword: currentPassword,
+                newPassword: newPassword
+            })
+        });
+        
+        if (response.ok) {
+            const data = await response.json();
+            showMessage(messageDiv, 'Password changed successfully!', 'success');
+            
+            setTimeout(() => {
+                closePasswordModal();
+            }, 2000);
+        } else {
+            const errorData = await response.json().catch(() => ({ message: 'Failed to change password' }));
+            showMessage(messageDiv, errorData.message || 'Failed to change password', 'error');
+        }
+    } catch (error) {
+        showMessage(messageDiv, 'Network error. Please try again.', 'error');
+    } finally {
+        saveBtn.disabled = false;
+        saveBtn.textContent = 'CHANGE PASSWORD';
+    }
+}
+
+// In-Game Name Modal Functions
+function openInGameNameModal() {
+    const currentInGameName = sessionStorage.getItem('inGameName') || '';
+    document.getElementById('newInGameName').value = currentInGameName;
+    document.getElementById('inGameNameModal').style.display = 'flex';
+    hideMessage(document.getElementById('inGameNameMessage'));
+}
+
+function closeInGameNameModal() {
+    document.getElementById('inGameNameModal').style.display = 'none';
+}
+
+async function updateInGameName() {
+    const newInGameName = document.getElementById('newInGameName').value.trim();
+    const messageDiv = document.getElementById('inGameNameMessage');
+    const saveBtn = document.getElementById('saveInGameNameBtn');
+    
+    hideMessage(messageDiv);
+    
+    if (!newInGameName) {
+        showMessage(messageDiv, 'In-game name cannot be empty', 'error');
+        return;
+    }
+    
+    if (newInGameName.length > 100) {
+        showMessage(messageDiv, 'In-game name is too long (max 100 characters)', 'error');
+        return;
+    }
+    
+    saveBtn.disabled = true;
+    saveBtn.textContent = 'SAVING...';
+    
+    try {
+        const response = await makeSecureApiRequest(API_CONFIG.ENDPOINTS.AUTH.UPDATE_PROFILE, {
+            method: 'POST',
+            body: JSON.stringify({
+                inGameName: newInGameName
+            })
+        });
+        
+        if (response.ok) {
+            const data = await response.json();
+            
+            // Update session storage and display
+            sessionStorage.setItem('inGameName', data.inGameName);
+            document.getElementById('inGameNameDisplay').textContent = data.inGameName;
+            
+            showMessage(messageDiv, 'In-game name updated successfully!', 'success');
+            
+            setTimeout(() => {
+                closeInGameNameModal();
+            }, 2000);
+        } else {
+            const errorData = await response.json().catch(() => ({ message: 'Failed to update in-game name' }));
+            showMessage(messageDiv, errorData.message || 'Failed to update in-game name', 'error');
+        }
+    } catch (error) {
+        showMessage(messageDiv, 'Network error. Please try again.', 'error');
+    } finally {
+        saveBtn.disabled = false;
+        saveBtn.textContent = 'SAVE';
+    }
+}
+
+// Helper functions for messages
+function showMessage(element, text, type) {
+    element.textContent = text;
+    element.className = `form-message show ${type}`;
+}
+
+function hideMessage(element) {
+    element.className = 'form-message';
+    element.textContent = '';
+}
+

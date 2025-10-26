@@ -207,7 +207,7 @@
                     <button class="view-btn" onclick="setQuery('SELECT * FROM Users')" style="border-radius: 0; border-right: 2px solid #18140c;">SHOW ALL USERS</button>
                     <button class="view-btn" onclick="setQuery('SELECT * FROM Kills')" style="border-radius: 0; border-right: 2px solid #18140c;">SHOW ALL KILLS</button>
                     <button class="view-btn" onclick="setQuery('SELECT * FROM Admins')" style="border-radius: 0; border-right: 2px solid #18140c;">SHOW ADMINS</button>
-                    <button class="view-btn" onclick="setQuery('SELECT COUNT(*) as TotalUsers FROM Users')" style="border-radius: 0;">COUNT USERS</button>
+                    <button class="view-btn" onclick="setQuery('SELECT * FROM UserTokens ORDER BY CreatedAt DESC')" style="border-radius: 0;">USER TOKENS</button>
                 </div>
                 <div class="filter-row" style="grid-template-columns: repeat(4, 1fr); gap: 2px;">
                     <button class="view-btn" onclick="setQuery('SELECT TOP 10 * FROM Users ORDER BY CreatedAt DESC')" style="border-radius: 0; border-right: 2px solid #18140c;">RECENT USERS</button>

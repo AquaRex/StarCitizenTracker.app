@@ -311,3 +311,264 @@ body.dark-mode .save-btn:hover {
     background: transparent;
     color: #aba9a2;
 }
+
+/* Setting Button */
+.setting-btn {
+    padding: 12px 25px;
+    background: transparent;
+    border: 2px solid #18140c;
+    font-size: 0.7rem;
+    font-weight: 300;
+    letter-spacing: 2px;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: #18140c;
+    text-transform: uppercase;
+    font-family: Arial, sans-serif;
+}
+
+.setting-btn:hover {
+    background: #18140c;
+    color: #aba9a2;
+}
+
+.setting-item:hover .setting-btn {
+    border-color: #aba9a2;
+    color: #aba9a2;
+}
+
+.setting-item:hover .setting-btn:hover {
+    background: #aba9a2;
+    color: #18140c;
+}
+
+body.dark-mode .setting-btn {
+    border-color: #aba9a2;
+    color: #aba9a2;
+}
+
+body.dark-mode .setting-btn:hover {
+    background: #aba9a2;
+    color: #18140c;
+}
+
+body.dark-mode .setting-item:hover .setting-btn {
+    border-color: #18140c;
+    color: #18140c;
+}
+
+body.dark-mode .setting-item:hover .setting-btn:hover {
+    background: #18140c;
+    color: #aba9a2;
+}
+
+/* Modal Styles */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(24, 20, 12, 0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: #aba9a2;
+    border: 2px solid #18140c;
+    width: 90%;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.modal-header {
+    padding: 30px 40px;
+    border-bottom: 2px solid #18140c;
+}
+
+.modal-header h3 {
+    font-size: 0.9rem;
+    font-weight: 300;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: #18140c;
+    margin: 0;
+}
+
+.modal-body {
+    padding: 40px;
+}
+
+.form-group {
+    margin-bottom: 25px;
+}
+
+.form-group:last-child {
+    margin-bottom: 0;
+}
+
+.form-label {
+    display: block;
+    font-size: 0.7rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    color: #18140c;
+    opacity: 0.7;
+}
+
+.form-input {
+    width: 100%;
+    padding: 15px 20px;
+    border: 2px solid #18140c;
+    background: transparent;
+    font-size: 0.85rem;
+    font-weight: 300;
+    letter-spacing: 1.5px;
+    color: #18140c;
+    font-family: Arial, sans-serif;
+    transition: all 0.2s;
+    box-sizing: border-box;
+}
+
+.form-input:focus {
+    outline: none;
+    background: #18140c;
+    color: #aba9a2;
+}
+
+.form-input::placeholder {
+    color: #18140c;
+    opacity: 0.4;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 2px;
+}
+
+.form-message {
+    margin-top: 20px;
+    font-size: 0.75rem;
+    letter-spacing: 1.5px;
+    text-align: center;
+    padding: 15px;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.form-message.show {
+    opacity: 1;
+}
+
+.form-message.success {
+    color: #52d075;
+    border: 2px solid #52d075;
+}
+
+.form-message.error {
+    color: #d05252;
+    border: 2px solid #d05252;
+}
+
+.modal-footer {
+    padding: 30px 40px;
+    border-top: 2px solid #18140c;
+    display: flex;
+    gap: 15px;
+    justify-content: flex-end;
+}
+
+.modal-btn {
+    padding: 15px 30px;
+    border: 2px solid #18140c;
+    font-size: 0.75rem;
+    font-weight: 300;
+    letter-spacing: 2px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-transform: uppercase;
+    font-family: Arial, sans-serif;
+}
+
+.modal-btn.primary {
+    background: #18140c;
+    color: #aba9a2;
+}
+
+.modal-btn.primary:hover {
+    background: transparent;
+    color: #18140c;
+}
+
+.modal-btn.secondary {
+    background: transparent;
+    color: #18140c;
+}
+
+.modal-btn.secondary:hover {
+    background: #18140c;
+    color: #aba9a2;
+}
+
+/* Dark Mode for Modals */
+body.dark-mode .modal {
+    background: rgba(171, 169, 162, 0.9);
+}
+
+body.dark-mode .modal-content {
+    background: #18140c;
+    border-color: #aba9a2;
+}
+
+body.dark-mode .modal-header {
+    border-color: #aba9a2;
+}
+
+body.dark-mode .modal-header h3,
+body.dark-mode .form-label {
+    color: #aba9a2;
+}
+
+body.dark-mode .form-input {
+    border-color: #aba9a2;
+    color: #aba9a2;
+}
+
+body.dark-mode .form-input:focus {
+    background: #aba9a2;
+    color: #18140c;
+}
+
+body.dark-mode .form-input::placeholder {
+    color: #aba9a2;
+}
+
+body.dark-mode .modal-footer {
+    border-color: #aba9a2;
+}
+
+body.dark-mode .modal-btn {
+    border-color: #aba9a2;
+}
+
+body.dark-mode .modal-btn.primary {
+    background: #aba9a2;
+    color: #18140c;
+}
+
+body.dark-mode .modal-btn.primary:hover {
+    background: transparent;
+    color: #aba9a2;
+}
+
+body.dark-mode .modal-btn.secondary {
+    color: #aba9a2;
+}
+
+body.dark-mode .modal-btn.secondary:hover {
+    background: #aba9a2;
+    color: #18140c;
+}

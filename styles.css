@@ -110,7 +110,8 @@ body.dark-mode .player-name,
 body.dark-mode .view-btn,
 body.dark-mode .select-display,
 body.dark-mode .btn,
-body.dark-mode .nav-icon-btn {
+body.dark-mode .nav-icon-btn,
+body.dark-mode .kill-arrow {
     color: #aba9a2;
 }
 
@@ -147,8 +148,14 @@ body.dark-mode .kill-entry:hover .kill-time,
 body.dark-mode .kill-entry:hover .kill-arrow,
 body.dark-mode .group-kill-entry:hover .meta-item,
 body.dark-mode .group-kill-entry:hover .kill-time,
+body.dark-mode .group-kill-entry:hover .kill-details-expanded,
 body.dark-mode .player-group-header:hover .player-group-name {
     color: #18140c;
+}
+
+body.dark-mode .player-group-name,
+body.dark-mode .player-group-count {
+    color: #aba9a2;
 }
 
 body.dark-mode .search-input,
@@ -216,6 +223,15 @@ body.dark-mode .player-group-header:hover .player-group-count {
 body.dark-mode .kill-entry.expanded:hover .kill-details-expanded,
 body.dark-mode .group-kill-entry.expanded:hover .kill-details-expanded {
     color: #18140c;
+}
+
+body.dark-mode .group-kill-entry .kill-details-expanded {
+    color: #aba9a2;
+}
+
+body.dark-mode .group-kill-entry .meta-item,
+body.dark-mode .group-kill-entry .kill-time {
+    color: #aba9a2;
 }
 
 body.dark-mode .btn:hover,
