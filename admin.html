@@ -370,9 +370,8 @@
         </div>
     </div>
 
-    <script type="module">
-        import { API_BASE_URL } from './config/api.js';
-
+    <script src="config/api.js"></script>
+    <script>
         const adminToken = sessionStorage.getItem('adminToken');
         const adminUsername = sessionStorage.getItem('adminUsername');
 
@@ -383,7 +382,7 @@
         document.getElementById('adminUsername').textContent = adminUsername;
 
         async function apiCall(endpoint, options = {}) {
-            const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+            const response = await fetch(`${API_CONFIG.BASE_URL}${endpoint}`, {
                 ...options,
                 headers: {
                     'Authorization': `Bearer ${adminToken}`,
@@ -679,6 +678,32 @@
             window.location.href = 'admin-login.html';
         };
 
+        function switchTab(tabName) {
+            // Hide all tab content
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.style.display = 'none';
+            });
+
+            // Remove active class from all tabs
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // Show selected tab content
+            document.getElementById(`${tabName}Tab`).style.display = 'block';
+
+            // Add active class to clicked tab
+            event.target.classList.add('active');
+
+            // Load data for the tab
+            if (tabName === 'users') {
+                loadUsers();
+            } else if (tabName === 'audit') {
+                loadAuditLogs();
+            }
+        }
+
+        window.switchTab = switchTab;
         window.loadUsers = loadUsers;
         window.loadAuditLogs = loadAuditLogs;
 
