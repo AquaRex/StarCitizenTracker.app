@@ -13,6 +13,7 @@ function initializeLeaderboard() {
     initializeLeaderboardComponents();
     initDarkMode();
     initAccountDropdown();
+    checkPublicProfile();
     loadLeaderboardData();
     document.addEventListener('click', (e) => {
         if (!e.target.closest('.nav-account')) {
@@ -28,12 +29,14 @@ function initializeLeaderboardComponents() {
     const isLoggedIn = sessionStorage.getItem('username') && sessionStorage.getItem('userId');
     
     document.getElementById('navigation-container').innerHTML = generateNavigation({
-        showBackButton: true,
+        showBackButton: false,
         backUrl: './index.html',
-        pageTitle: 'LEADERBOARD',
-        showLogo: false,
+        pageTitle: '',
+        showLogo: true,
+        logoUrl: './index.html',
         showAccountDropdown: isLoggedIn,
-        showLeaderboard: false
+        showLeaderboard: false,
+        currentPage: 'leaderboard'
     });
 }
 
@@ -264,6 +267,25 @@ function initAccountDropdown() {
                 window.location.href = `profile.html?user=${encodeURIComponent(username)}`;
             }
         });
+    }
+}
+
+// Check if user has public profile and show/hide profile button
+async function checkPublicProfile() {
+    try {
+        const response = await makeSecureApiRequest(API_CONFIG.ENDPOINTS.AUTH.VALIDATE, {
+            method: 'POST'
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            const profileBtn = document.getElementById('profileBtn');
+            if (profileBtn && data.isValid && data.publicProfile) {
+                profileBtn.style.display = 'flex';
+            }
+        }
+    } catch (error) {
+        console.error('Error checking public profile:', error);
     }
 }
 

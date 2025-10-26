@@ -6,7 +6,8 @@ function generateNavigation(options = {}) {
         showLogo = true,
         logoUrl = './index.html',
         showAccountDropdown = true,
-        showLeaderboard = true
+        showLeaderboard = true,
+        currentPage = 'home' // 'home', 'profile', or 'leaderboard'
     } = options;
 
     return `
@@ -61,22 +62,35 @@ function generateNavigation(options = {}) {
                             </svg>
                         </button>
                         <div class="account-dropdown" id="accountDropdown">
-                            <a href="#" class="dropdown-item" id="profileBtn" style="display: none;">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                                    <circle cx="12" cy="7" r="4"></circle>
-                                </svg>
-                                <span>PROFILE</span>
-                            </a>
-                            <a href="leaderboard.html" class="dropdown-item">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M3 3v18h18"></path>
-                                    <path d="M7 16h3v4H7z"></path>
-                                    <path d="M14 8h3v12h-3z"></path>
-                                    <path d="M7 11h3v2H7z"></path>
-                                </svg>
-                                <span>LEADERBOARD</span>
-                            </a>
+                            ${currentPage !== 'home' ? `
+                                <a href="index.html" class="dropdown-item" id="homeBtn">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                                        <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                                    </svg>
+                                    <span>HOME</span>
+                                </a>
+                            ` : ''}
+                            ${currentPage !== 'profile' ? `
+                                <a href="#" class="dropdown-item" id="profileBtn" style="display: none;">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                        <circle cx="12" cy="7" r="4"></circle>
+                                    </svg>
+                                    <span>PROFILE</span>
+                                </a>
+                            ` : ''}
+                            ${currentPage !== 'leaderboard' ? `
+                                <a href="leaderboard.html" class="dropdown-item">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M3 3v18h18"></path>
+                                        <path d="M7 16h3v4H7z"></path>
+                                        <path d="M14 8h3v12h-3z"></path>
+                                        <path d="M7 11h3v2H7z"></path>
+                                    </svg>
+                                    <span>LEADERBOARD</span>
+                                </a>
+                            ` : ''}
                             <a href="settings.html" class="dropdown-item">
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <circle cx="12" cy="12" r="3"></circle>

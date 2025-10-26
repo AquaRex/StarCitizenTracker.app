@@ -3,12 +3,12 @@
 .auth-container {
     max-width: 600px;
     margin: 40px auto 0;
-    border: 2px solid #18140c;
+    border: 2px solid var(--border-primary);
 }
 
 .auth-header {
     padding: 40px;
-    border-bottom: 2px solid #18140c;
+    border-bottom: 2px solid var(--border-primary);
     text-align: center;
 }
 
@@ -17,7 +17,7 @@
     font-weight: 300;
     letter-spacing: 8px;
     text-transform: uppercase;
-    color: #18140c;
+    color: var(--text-primary);
 }
 
 .auth-form {
@@ -34,7 +34,7 @@
     letter-spacing: 3px;
     opacity: 0.5;
     margin-bottom: 15px;
-    color: #18140c;
+    color: var(--text-primary);
     text-transform: uppercase;
 }
 
@@ -42,39 +42,39 @@
     width: 100%;
     padding: 20px 25px;
     background: transparent;
-    border: 2px solid #18140c;
+    border: 2px solid var(--border-primary);
     font-size: 0.9rem;
     font-weight: 300;
     letter-spacing: 2px;
-    color: #18140c;
+    color: var(--text-primary);
     outline: none;
     font-family: Arial, sans-serif;
     transition: all 0.2s;
 }
 
 .form-input::placeholder {
-    color: #18140c;
+    color: var(--text-primary);
     opacity: 0.3;
     letter-spacing: 1px;
 }
 
 .form-input:focus {
-    background: #18140c;
-    color: #aba9a2;
-    border-color: #18140c;
+    background: var(--hover-bg);
+    color: var(--hover-text);
+    border-color: var(--border-primary);
 }
 
 .form-input:focus::placeholder {
-    color: #aba9a2;
+    color: var(--hover-text);
     opacity: 0.3;
 }
 
 .form-input:hover {
-    border-color: #18140c;
+    border-color: var(--border-primary);
 }
 
 .form-input.error {
-    border-color: #d05252;
+    border-color: var(--accent-color);
 }
 
 .form-message {
@@ -83,7 +83,7 @@
     font-size: 0.8rem;
     letter-spacing: 1px;
     display: none;
-    border: 2px solid #18140c;
+    border: 2px solid var(--border-primary);
     transition: all 0.2s;
 }
 
@@ -92,35 +92,34 @@
 }
 
 .form-message.error {
-    color: #d05252;
-    border-color: #d05252;
+    color: var(--accent-color);
+    border-color: var(--accent-color);
     background: rgba(208, 82, 82, 0.05);
 }
 
 .form-message.success {
-    color: #18140c;
-    border-color: #18140c;
-    background: #18140c;
-    color: #aba9a2;
+    color: var(--hover-text);
+    border-color: var(--hover-bg);
+    background: var(--hover-bg);
 }
 
 .form-message.info {
-    color: #18140c;
-    border-color: #18140c;
+    color: var(--text-primary);
+    border-color: var(--border-primary);
     background: transparent;
 }
 
 .auth-button {
     width: 100%;
     padding: 25px 40px;
-    background: #18140c;
-    border: 2px solid #18140c;
+    background: var(--hover-bg);
+    border: 2px solid var(--border-primary);
     font-size: 0.85rem;
     font-weight: 300;
     letter-spacing: 3px;
     cursor: pointer;
     transition: all 0.2s;
-    color: #aba9a2;
+    color: var(--hover-text);
     text-transform: uppercase;
     font-family: Arial, sans-serif;
     position: relative;
@@ -129,7 +128,7 @@
 
 .auth-button:hover:not(:disabled) {
     background: transparent;
-    color: #18140c;
+    color: var(--text-primary);
 }
 
 .auth-button:disabled {
@@ -150,7 +149,7 @@
     height: 20px;
     margin: -10px 0 0 -10px;
     border: 2px solid transparent;
-    border-top-color: #aba9a2;
+    border-top-color: var(--hover-text);
     border-radius: 50%;
     animation: spin 0.8s linear infinite;
 }
@@ -162,7 +161,7 @@
 
 .auth-footer {
     padding: 30px 40px;
-    border-top: 2px solid #18140c;
+    border-top: 2px solid var(--border-primary);
     display: flex;
     flex-direction: column;
     gap: 15px;
@@ -174,13 +173,13 @@
     font-size: 0.7rem;
     letter-spacing: 2px;
     opacity: 0.5;
-    color: #18140c;
+    color: var(--text-primary);
 }
 
 .auth-link {
     font-size: 0.85rem;
     letter-spacing: 2px;
-    color: #d05252;
+    color: var(--accent-color);
     text-decoration: none;
     font-weight: 500;
     transition: all 0.2s;
@@ -189,20 +188,20 @@
 }
 
 .auth-link:hover {
-    border-color: #d05252;
+    border-color: var(--accent-color);
 }
 
-/* Password strength indicator (optional enhancement) */
+/* Password strength indicator */
 .password-strength {
     height: 3px;
     background: transparent;
     margin-top: 10px;
     transition: all 0.3s;
-    border: 1px solid #18140c;
+    border: 1px solid var(--border-primary);
 }
 
 .password-strength.weak {
-    background: #d05252;
+    background: var(--accent-color);
     width: 33%;
 }
 
@@ -212,7 +211,7 @@
 }
 
 .password-strength.strong {
-    background: #18140c;
+    background: var(--text-primary);
     width: 100%;
 }
 

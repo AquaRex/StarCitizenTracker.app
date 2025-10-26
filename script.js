@@ -17,7 +17,8 @@ let currentFilters = {
 function initializeComponents() {
     document.getElementById('navigation-container').innerHTML = generateNavigation({
         showLogo: true,
-        logoUrl: './index.html'
+        logoUrl: './index.html',
+        currentPage: 'home'
     });
     document.getElementById('stats-section-container').innerHTML = generateStatsSection();
     document.getElementById('view-buttons-container').innerHTML = generateViewButtons({
@@ -38,8 +39,8 @@ function initializeComponents() {
 window.addEventListener('DOMContentLoaded', () => {
     // Check if user is logged in
     if (!username || !userId) {
-        // Redirect to login if not authenticated
-        window.location.href = 'login.html';
+        // Redirect to leaderboard (public landing page) if not authenticated
+        window.location.href = 'leaderboard.html';
         return;
     }
 });

@@ -339,3 +339,24 @@ async function handleResetPassword(event) {
         setButtonLoading(button, false);
     }
 }
+
+// Initialize dark mode
+function initDarkMode() {
+    const darkModeToggle = document.getElementById('darkModeToggle');
+    const isDarkMode = localStorage.getItem('darkMode') === 'true';
+    
+    if (isDarkMode) {
+        document.body.classList.add('dark-mode');
+    }
+
+    if (darkModeToggle) {
+        darkModeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+            const isNowDarkMode = document.body.classList.contains('dark-mode');
+            localStorage.setItem('darkMode', isNowDarkMode.toString());
+        });
+    }
+}
+
+// Initialize dark mode on page load
+document.addEventListener('DOMContentLoaded', initDarkMode);

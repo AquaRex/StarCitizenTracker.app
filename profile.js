@@ -52,6 +52,38 @@ function initViewButtons() {
     if (deathsViewBtn) deathsViewBtn.addEventListener('click', () => switchView('deaths'));
 }
 
+// Initialize account dropdown
+function initAccountDropdown() {
+    const accountBtn = document.getElementById('accountBtn');
+    const accountDropdown = document.getElementById('accountDropdown');
+    const logoutBtn = document.getElementById('logoutBtn');
+    const profileBtn = document.getElementById('profileBtn');
+    
+    if (!accountBtn || !accountDropdown) return; // Not logged in
+    
+    accountBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        accountDropdown.classList.toggle('show');
+    });
+    
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            sessionStorage.clear();
+            window.location.href = 'login.html';
+        });
+    }
+
+    // Profile button (HOME button on profile page) - href handles navigation, no click handler needed
+    
+    // Close dropdown when clicking outside
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('.nav-account')) {
+            accountDropdown.classList.remove('show');
+        }
+    });
+}
+
 // Switch between views
 function switchView(view) {
     currentView = view;
@@ -283,14 +315,21 @@ function showError(title, message, iconType = 'warning') {
 
 // Initialize components for profile page
 function initializeProfileComponents(username) {
-    // Generate navigation (no account dropdown for profile page)
+    // Check if user is logged in (check for token or username/userId)
+    const token = sessionStorage.getItem('token');
+    const hasUserSession = sessionStorage.getItem('username') && sessionStorage.getItem('userId');
+    const isLoggedIn = !!(token || hasUserSession);
+    
+    // Generate navigation - show account dropdown if logged in, otherwise show login button
     document.getElementById('navigation-container').innerHTML = generateNavigation({
-        showBackButton: true,
+        showBackButton: false,
         backUrl: './index.html',
         pageTitle: '',
-        showLogo: false,
-        showAccountDropdown: false,
-        showLeaderboard: false // Don't show leaderboard button on profile page
+        showLogo: true,
+        logoUrl: './index.html',
+        showAccountDropdown: isLoggedIn,
+        showLeaderboard: true,
+        currentPage: 'profile'
     });
     
     // Generate player bar for profile
@@ -361,6 +400,9 @@ function initializeProfile() {
     
     // Initialize dark mode
     initDarkMode();
+    
+    // Initialize account dropdown (if logged in)
+    initAccountDropdown();
     
     // Initialize view buttons after components are created
     initViewButtons();
