@@ -139,46 +139,62 @@
         let allUsers = [];
         let filteredUsers = [];
         let expandedUserId = null;
-        const token = localStorage.getItem('adminToken');
-
-        // Check authentication
-        if (!token) {
-            window.location.href = 'admin-login.html';
-        }
+        let redirecting = false;
 
         // API call helper
         async function apiCall(endpoint, options = {}) {
-            const response = await fetch(`${API_CONFIG.BASE_URL}${endpoint}`, {
-                ...options,
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`,
-                    ...options.headers
+            const token = localStorage.getItem('adminToken');
+            
+            if (!token) {
+                if (!redirecting) {
+                    redirecting = true;
+                    localStorage.removeItem('adminToken');
+                    window.location.replace('admin-login.html');
                 }
-            });
-
-            if (response.status === 401) {
-                localStorage.removeItem('adminToken');
-                window.location.href = 'admin-login.html';
                 return null;
             }
 
-            if (!response.ok) {
-                const error = await response.text();
-                throw new Error(error || 'API request failed');
-            }
+            try {
+                const response = await fetch(`${API_CONFIG.BASE_URL}${endpoint}`, {
+                    ...options,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`,
+                        ...options.headers
+                    }
+                });
 
-            return response.json();
+                if (response.status === 401) {
+                    if (!redirecting) {
+                        redirecting = true;
+                        localStorage.removeItem('adminToken');
+                        window.location.replace('admin-login.html');
+                    }
+                    return null;
+                }
+
+                if (!response.ok) {
+                    const error = await response.text();
+                    throw new Error(error || 'API request failed');
+                }
+
+                return response.json();
+            } catch (error) {
+                console.error('API call failed:', error);
+                throw error;
+            }
         }
 
         // Load stats
         async function loadStats() {
             try {
                 const stats = await apiCall('/api/Admin/stats');
-                document.querySelector('#totalUsers .stat-value').textContent = stats.totalUsers || 0;
-                document.querySelector('#verifiedUsers .stat-value').textContent = stats.verifiedUsers || 0;
-                document.querySelector('#totalKills .stat-value').textContent = stats.totalKills || 0;
-                document.querySelector('#adminLogins .stat-value').textContent = stats.adminLogins || 0;
+                if (stats) {
+                    document.querySelector('#totalUsers .stat-value').textContent = stats.totalUsers || 0;
+                    document.querySelector('#verifiedUsers .stat-value').textContent = stats.verifiedUsers || 0;
+                    document.querySelector('#totalKills .stat-value').textContent = stats.totalKills || 0;
+                    document.querySelector('#adminLogins .stat-value').textContent = stats.adminLogins || 0;
+                }
             } catch (error) {
                 console.error('Failed to load stats:', error);
             }
@@ -187,9 +203,12 @@
         // Load users
         async function loadUsers() {
             try {
-                allUsers = await apiCall('/api/Admin/users');
-                filteredUsers = [...allUsers];
-                renderUsers();
+                const result = await apiCall('/api/Admin/users');
+                if (result) {
+                    allUsers = result;
+                    filteredUsers = [...allUsers];
+                    renderUsers();
+                }
             } catch (error) {
                 console.error('Failed to load users:', error);
                 document.getElementById('usersContent').innerHTML = '<div class="error" style="text-align: center; padding: 40px;">FAILED TO LOAD USERS</div>';
@@ -423,7 +442,7 @@
         async function loadAuditLogs() {
             try {
                 const logs = await apiCall('/api/Admin/audit-logs');
-                if (logs.length === 0) {
+                if (!logs || logs.length === 0) {
                     document.getElementById('auditContent').innerHTML = '<div class="no-data" style="text-align: center; padding: 40px;">NO AUDIT LOGS FOUND</div>';
                     return;
                 }
