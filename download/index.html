@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Download - STAR TRACKER</title>
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="../color-config.css">
+    <style>
+        .download-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 60vh;
+            text-align: center;
+        }
+
+        .download-title {
+            font-size: 4em;
+            font-weight: bold;
+            margin-bottom: 60px;
+            letter-spacing: 3px;
+            color: var(--secondary-color);
+        }
+
+        .download-button {
+            display: inline-block;
+            padding: 25px 80px;
+            font-size: 1.5em;
+            font-weight: bold;
+            letter-spacing: 2px;
+            background: var(--secondary-color);
+            color: var(--primary-color);
+            border: 3px solid var(--secondary-color);
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .download-button:hover {
+            background: var(--accent-color);
+            border-color: var(--accent-color);
+            transform: scale(1.05);
+        }
+
+        .download-button:active {
+            transform: scale(0.98);
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <!-- Navigation -->
+        <div id="navigation-container"></div>
+
+        <div class="download-container">
+            <h1 class="download-title">STAR TRACKER</h1>
+
+            <a href="starcitizentracker.zip" class="download-button" download>
+                DOWNLOAD
+            </a>
+        </div>
+    </div>
+
+    <!-- Load security utilities first -->
+    <script src="../utils/security.js"></script>
+    <!-- Load API configuration -->
+    <script src="../config/api.js"></script>
+    <!-- Load components -->
+    <script src="../components.js"></script>
+    <script src="../color-config.js"></script>
+    <script>
+        // Initialize navigation
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('navigation-container').innerHTML = generateNavigation({
+                showThemeToggle: true,
+                showUserMenu: false,
+                activePage: 'download'
+            });
+        });
+    </script>
+</body>
+</html>
