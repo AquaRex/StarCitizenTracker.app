@@ -204,14 +204,14 @@
                     <div style="padding: 25px 40px; font-size: 11px; letter-spacing: 2px; text-transform: uppercase;">DIRECT SQL QUERY EXECUTOR</div>
                 </div>
                 <div class="filter-row" style="grid-template-columns: repeat(4, 1fr); gap: 2px;">
-                    <button class="view-btn" onclick="setQuery('SELECT * FROM Users')" style="border-radius: 0; border-right: 2px solid #18140c;">SHOW ALL USERS</button>
-                    <button class="view-btn" onclick="setQuery('SELECT * FROM Kills')" style="border-radius: 0; border-right: 2px solid #18140c;">SHOW ALL KILLS</button>
-                    <button class="view-btn" onclick="setQuery('SELECT * FROM Admins')" style="border-radius: 0; border-right: 2px solid #18140c;">SHOW ADMINS</button>
+                    <button class="view-btn" onclick="setQuery('SELECT * FROM Users ORDER BY CreatedAt DESC')" style="border-radius: 0; border-right: 2px solid #18140c;">SHOW ALL USERS</button>
+                    <button class="view-btn" onclick="setQuery('SELECT * FROM Kills ORDER BY KillTime DESC')" style="border-radius: 0; border-right: 2px solid #18140c;">SHOW ALL KILLS</button>
+                    <button class="view-btn" onclick="setQuery('SELECT * FROM Admins ORDER BY CreatedAt DESC')" style="border-radius: 0; border-right: 2px solid #18140c;">SHOW ADMINS</button>
                     <button class="view-btn" onclick="setQuery('SELECT * FROM UserTokens ORDER BY CreatedAt DESC')" style="border-radius: 0;">USER TOKENS</button>
                 </div>
                 <div class="filter-row" style="grid-template-columns: repeat(4, 1fr); gap: 2px;">
-                    <button class="view-btn" onclick="setQuery('SELECT TOP 10 * FROM Users ORDER BY CreatedAt DESC')" style="border-radius: 0; border-right: 2px solid #18140c;">RECENT USERS</button>
-                    <button class="view-btn" onclick="setQuery('SELECT TOP 10 * FROM Kills ORDER BY KillTime DESC')" style="border-radius: 0; border-right: 2px solid #18140c;">RECENT KILLS</button>
+                    <button class="view-btn" onclick="setQuery('SELECT * FROM Kills WHERE IsPlayer=1 ORDER BY KillTime DESC')" style="border-radius: 0; border-right: 2px solid #18140c;">ALL PLAYER KILLS</button>
+                    <button class="view-btn" onclick="setQuery('SELECT * FROM Kills WHERE IsPlayer=0 ORDER BY KillTime DESC')" style="border-radius: 0; border-right: 2px solid #18140c;">ALL NPC KILLS</button>
                     <button class="view-btn" onclick="setQuery('SELECT u.Username, COUNT(k.Id) as KillCount FROM Users u LEFT JOIN Kills k ON u.Id = k.UserId GROUP BY u.Username ORDER BY KillCount DESC')" style="border-radius: 0; border-right: 2px solid #18140c;">LEADERBOARD</button>
                     <button class="view-btn" onclick="setQuery('SELECT * FROM AdminAuditLog ORDER BY Timestamp DESC')" style="border-radius: 0;">AUDIT LOGS</button>
                 </div>
