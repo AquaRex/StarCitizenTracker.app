@@ -12,7 +12,7 @@ let PROFILE_PLAYER_NAME = '';
 let currentFilters = {
     weapon: '',
     zone: '',
-    damage: '',
+    killType: '',
     sort: 'date-desc',
     search: ''
 };
@@ -475,8 +475,8 @@ function selectOption(dropdownId, value, text) {
         currentFilters.weapon = value;
     } else if (dropdownId === 'zoneFilter') {
         currentFilters.zone = value;
-    } else if (dropdownId === 'damageFilter') {
-        currentFilters.damage = value;
+    } else if (dropdownId === 'killTypeFilter') {
+        currentFilters.killType = value;
     } else if (dropdownId === 'sortOption') {
         currentFilters.sort = value;
     }
@@ -489,7 +489,7 @@ function resetFilters() {
     currentFilters = {
         weapon: '',
         zone: '',
-        damage: '',
+        killType: '',
         sort: 'date-desc',
         search: ''
     };
@@ -497,7 +497,7 @@ function resetFilters() {
     // Reset UI
     document.getElementById('weaponFilterText').textContent = 'ALL WEAPONS';
     document.getElementById('zoneFilterText').textContent = 'ALL ZONES';
-    document.getElementById('damageFilterText').textContent = 'ALL DAMAGE TYPES';
+    document.getElementById('killTypeFilterText').textContent = 'ALL KILLS';
     document.getElementById('sortOptionText').textContent = 'NEWEST FIRST';
     document.getElementById('searchInput').value = '';
     
@@ -545,7 +545,6 @@ function formatDateTime(dateString) {
 function populateFilters() {
     populateWeaponFilter();
     populateZoneFilter();
-    populateDamageFilter();
 }
 
 function populateWeaponFilter() {
@@ -598,16 +597,6 @@ function populateZoneFilter() {
     }
 }
 
-function populateDamageFilter() {
-    const damages = [...new Set(allKills.map(k => k.damageType || 'Unknown'))].sort();
-    const damageOptions = document.getElementById('damageFilterOptions');
-    
-    if (damageOptions) {
-        damageOptions.innerHTML = '<div class="select-option" onclick="selectOption(\'damageFilter\', \'\', \'ALL DAMAGE TYPES\')">ALL DAMAGE TYPES</div>' +
-            damages.map(d => '<div class="select-option" onclick="selectOption(\'damageFilter\', \'' + escapeHtml(d) + '\', \'' + escapeHtml(d.toUpperCase()) + '\')">' + escapeHtml(d.toUpperCase()) + '</div>').join('');
-    }
-}
-
 // Initialize filters
 function initFilters() {
     // Filters are already initialized through the component system
@@ -634,8 +623,11 @@ function applyFilters(kills) {
             }
         }
         
-        // Damage filter
-        if (currentFilters.damage && kill.damageType !== currentFilters.damage) return false;
+        // Kill type filter
+        if (currentFilters.killType) {
+            if (currentFilters.killType === 'player' && !(kill.isPlayer === true || kill.isPlayer === 1)) return false;
+            if (currentFilters.killType === 'npc' && !(kill.isPlayer === false || kill.isPlayer === 0)) return false;
+        }
         
         // Search filter
         if (currentFilters.search) {

@@ -24,11 +24,15 @@ function generateFilterPanel(options = {}) {
                     </div>
                     <div class="select-options" id="zoneFilterOptions"></div>
                 </div>
-                <div class="custom-select" id="damageFilterContainer">
-                    <div class="select-display" onclick="toggleDropdown('damageFilter')">
-                        <span id="damageFilterText">ALL DAMAGE TYPES</span>
+                <div class="custom-select" id="killTypeFilterContainer">
+                    <div class="select-display" onclick="toggleDropdown('killTypeFilter')">
+                        <span id="killTypeFilterText">ALL KILLS</span>
                     </div>
-                    <div class="select-options" id="damageFilterOptions"></div>
+                    <div class="select-options" id="killTypeFilterOptions">
+                        <div class="select-option" onclick="selectOption('killTypeFilter', '', 'ALL KILLS')">ALL KILLS</div>
+                        <div class="select-option" onclick="selectOption('killTypeFilter', 'player', 'PLAYER KILLS')">PLAYER KILLS</div>
+                        <div class="select-option" onclick="selectOption('killTypeFilter', 'npc', 'NPC KILLS')">NPC KILLS</div>
+                    </div>
                 </div>
             </div>
             <div class="filter-row">

@@ -9,7 +9,7 @@ let currentView = 'all';
 let currentFilters = {
     weapon: '',
     zone: '',
-    damage: '',
+    killType: '',
     sort: 'date-desc',
     search: ''
 };
@@ -239,21 +239,6 @@ function populateFilters() {
         option.onclick = () => selectOption('zoneFilter', JSON.stringify(rawZones), z);
         zoneOptions.appendChild(option);
     });
-    
-    const damages = [...new Set(allKills.map(k => k.damageType || 'Unknown'))].sort();
-    const damageOptions = document.getElementById('damageFilterOptions');
-    
-    damageOptions.innerHTML = '';
-    
-    const allDamageOption = createSafeElement('div', 'ALL DAMAGE TYPES', 'select-option');
-    allDamageOption.onclick = () => selectOption('damageFilter', '', 'ALL DAMAGE TYPES');
-    damageOptions.appendChild(allDamageOption);
-    
-    damages.forEach(d => {
-        const option = createSafeElement('div', d.toUpperCase(), 'select-option');
-        option.onclick = () => selectOption('damageFilter', d, d.toUpperCase());
-        damageOptions.appendChild(option);
-    });
 }
 
 // Handle search input
@@ -302,8 +287,8 @@ function selectOption(filterId, value, displayText) {
         currentFilters.weapon = parsedValue;
     } else if (filterId === 'zoneFilter') {
         currentFilters.zone = parsedValue;
-    } else if (filterId === 'damageFilter') {
-        currentFilters.damage = parsedValue;
+    } else if (filterId === 'killTypeFilter') {
+        currentFilters.killType = parsedValue;
     } else if (filterId === 'sortOption') {
         currentFilters.sort = parsedValue;
     }
@@ -354,11 +339,13 @@ function applyFilters() {
             (Array.isArray(currentFilters.zone) ? 
                 currentFilters.zone.includes(k.zone || 'Unknown') : 
                 (k.zone || 'Unknown') === currentFilters.zone);
-        const damageMatch = !currentFilters.damage || (k.damageType || 'Unknown') === currentFilters.damage;
+        const killTypeMatch = !currentFilters.killType || 
+            (currentFilters.killType === 'player' && (k.isPlayer === true || k.isPlayer === 1)) ||
+            (currentFilters.killType === 'npc' && (k.isPlayer === false || k.isPlayer === 0));
         const searchMatch = !currentFilters.search || 
             k.killerUser.toLowerCase().includes(currentFilters.search.toLowerCase()) ||
             k.victimUser.toLowerCase().includes(currentFilters.search.toLowerCase());
-        return weaponMatch && zoneMatch && damageMatch && searchMatch;
+        return weaponMatch && zoneMatch && killTypeMatch && searchMatch;
     });
     
     // Sort
@@ -392,11 +379,13 @@ function applyFiltersGrouped(kills, groupBy, containerId) {
             (Array.isArray(currentFilters.zone) ? 
                 currentFilters.zone.includes(k.zone || 'Unknown') : 
                 (k.zone || 'Unknown') === currentFilters.zone);
-        const damageMatch = !currentFilters.damage || (k.damageType || 'Unknown') === currentFilters.damage;
+        const killTypeMatch = !currentFilters.killType || 
+            (currentFilters.killType === 'player' && (k.isPlayer === true || k.isPlayer === 1)) ||
+            (currentFilters.killType === 'npc' && (k.isPlayer === false || k.isPlayer === 0));
         const searchMatch = !currentFilters.search || 
             k.killerUser.toLowerCase().includes(currentFilters.search.toLowerCase()) ||
             k.victimUser.toLowerCase().includes(currentFilters.search.toLowerCase());
-        return weaponMatch && zoneMatch && damageMatch && searchMatch;
+        return weaponMatch && zoneMatch && killTypeMatch && searchMatch;
     });
     
     // Sort kills within each group
@@ -423,14 +412,14 @@ function resetFilters() {
     currentFilters = {
         weapon: '',
         zone: '',
-        damage: '',
+        killType: '',
         sort: 'date-desc',
         search: ''
     };
     
     document.getElementById('weaponFilterText').textContent = 'ALL WEAPONS';
     document.getElementById('zoneFilterText').textContent = 'ALL ZONES';
-    document.getElementById('damageFilterText').textContent = 'ALL DAMAGE TYPES';
+    document.getElementById('killTypeFilterText').textContent = 'ALL KILLS';
     document.getElementById('sortOptionText').textContent = 'NEWEST FIRST';
     document.getElementById('searchInput').value = '';
     
