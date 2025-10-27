@@ -1,0 +1,92 @@
+/**
+ * Shared Event Notification Renderer
+ * This module contains all the logic for rendering event notifications
+ * Used by both the window version and OBS version
+ */
+
+class EventNotificationRenderer {
+    constructor(contentElement, options = {}) {
+        this.content = contentElement;
+        this.container = null;
+        this.hideTimeout = null;
+        
+        // Configuration
+        this.displayDuration = options.displayDuration || 20000;
+    }
+
+    setConfig(config) {
+        if (config.displayDuration !== undefined) {
+            this.displayDuration = config.displayDuration;
+        }
+    }
+
+    escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    showShipAttack(attacker, ship, crew) {
+        // Clear existing timeout
+        if (this.hideTimeout) {
+            clearTimeout(this.hideTimeout);
+        }
+
+        // Create or reuse container
+        if (!this.container) {
+            this.container = document.createElement('div');
+            this.container.className = 'event-container';
+            this.content.appendChild(this.container);
+        }
+
+        const crewCount = crew && crew.length > 0 ? crew.length : 0;
+        
+        let html = `
+            <div class="event-main">
+                <span class="event-icon">🚀</span>
+                <span class="event-attacker">${this.escapeHtml(attacker)}</span>
+                <span class="event-separator">➜</span>
+                <span class="event-ship">${this.escapeHtml(ship)}</span>
+            </div>
+        `;
+
+        if (crewCount > 0) {
+            html += `
+                <div class="event-crew-container">
+                    ${crew.map(member => `<div class="crew-member">${this.escapeHtml(member)}</div>`).join('')}
+                </div>
+            `;
+        }
+
+        this.container.innerHTML = html;
+        this.container.classList.add('show');
+        this.container.classList.remove('hide');
+
+        this.hideTimeout = setTimeout(() => {
+            this.hide();
+        }, this.displayDuration);
+    }
+
+    hide() {
+        if (this.container) {
+            this.container.classList.add('hide');
+            this.container.classList.remove('show');
+        }
+    }
+
+    clear() {
+        if (this.container) {
+            this.container.innerHTML = '';
+            this.container.classList.remove('show', 'hide');
+        }
+        if (this.hideTimeout) {
+            clearTimeout(this.hideTimeout);
+            this.hideTimeout = null;
+        }
+    }
+}
+
+// Export for use in other scripts
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = EventNotificationRenderer;
+}

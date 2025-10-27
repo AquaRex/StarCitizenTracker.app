@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SETTINGS</title>
+    <style>
+        :root {
+            --color-light: #aba9a2;
+            --color-dark: #18140c;
+            --accent-color: #d05252;
+            --primary-color: var(--color-dark);
+            --secondary-color: var(--color-light);
+        }
+
+        body.dark-mode {
+            --primary-color: var(--color-dark);
+            --secondary-color: var(--color-light);
+        }
+
+        body.light-mode {
+            --primary-color: var(--color-light);
+            --secondary-color: var(--color-dark);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 12px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--primary-color);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--secondary-color);
+            border: 2px solid var(--primary-color);
+            cursor: pointer;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--secondary-color);
+            opacity: 0.8;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: var(--primary-color);
+            color: var(--secondary-color);
+            min-height: 100vh;
+            padding: 0;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        .main-container {
+            width: 100vw;
+            height: 100vh;
+            background: var(--primary-color);
+            overflow-y: auto;
+            overflow-x: hidden;
+            box-sizing: border-box;
+            padding: 40px;
+        }
+
+        .top-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0px;
+            border: none;
+            margin: 0 0 40px 0;
+            gap: 40px;
+            position: sticky;
+            top: -40px;
+            background: var(--primary-color);
+            z-index: 1000;
+            padding-top: 40px;
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 25px 40px;
+            border: 2px solid var(--secondary-color);
+            flex: 1;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--secondary-color);
+            text-decoration: none;
+            font-size: 0.75rem;
+            letter-spacing: 2px;
+            transition: all 0.2s;
+            padding: 8px 15px;
+            border: 2px solid var(--secondary-color);
+            background: transparent;
+            cursor: pointer;
+        }
+
+        .back-btn:hover {
+            background: var(--secondary-color);
+            color: var(--primary-color);
+        }
+
+        .page-title {
+            font-size: 0.9rem;
+            letter-spacing: 4px;
+            font-weight: 300;
+            color: var(--secondary-color);
+        }
+
+        .nav-actions {
+            display: flex;
+            gap: 40px;
+            padding: 25px 0;
+        }
+
+        .nav-icon-btn {
+            width: 40px;
+            height: 40px;
+            border: 2px solid var(--secondary-color);
+            background: transparent;
+            color: var(--secondary-color);
+            cursor: pointer;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            outline: none;
+        }
+
+        .nav-icon-btn:hover {
+            background: var(--secondary-color);
+            color: var(--primary-color);
+        }
+
+        /* Settings Sections */
+        .settings-section {
+            border: 2px solid var(--secondary-color);
+            margin-bottom: 40px;
+        }
+
+        .settings-section:first-of-type {
+            margin-top: 0;
+        }
+
+        .settings-section:last-of-type {
+            margin-bottom: 0;
+        }
+
+        .section-header {
+            padding: 25px 40px;
+            border-bottom: 2px solid var(--secondary-color);
+            background-color: var(--secondary-color);
+        }
+
+        .section-header h2 {
+            font-size: 0.9rem;
+            font-weight: 300;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            color: var(--primary-color);
+        }
+
+        .section-content {
+            padding: 0;
+        }
+
+        .setting-item {
+            padding: 30px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--secondary-color);
+            transition: all 0.2s;
+        }
+
+        .setting-item:last-child {
+            border-bottom: none;
+        }
+
+        .setting-item:hover {
+            background: var(--secondary-color);
+            color: var(--primary-color);
+        }
+
+        .setting-info {
+            flex: 1;
+        }
+
+        .setting-label {
+            font-size: 0.7rem;
+            letter-spacing: 3px;
+            opacity: 0.5;
+            margin-bottom: 8px;
+            color: var(--secondary-color);
+            text-transform: uppercase;
+        }
+
+        .setting-item:hover .setting-label {
+            color: var(--primary-color);
+        }
+
+        .setting-value {
+            font-size: 0.9rem;
+            letter-spacing: 1.5px;
+            font-weight: 400;
+            color: var(--secondary-color);
+        }
+
+        .setting-item:hover .setting-value {
+            color: var(--primary-color);
+        }
+
+        .setting-description {
+            font-size: 0.75rem;
+            letter-spacing: 1px;
+            opacity: 0.7;
+            margin-top: 8px;
+            color: var(--secondary-color);
+        }
+
+        .setting-item:hover .setting-description {
+            color: var(--primary-color);
+        }
+
+        /* Toggle Switch */
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 30px;
+            flex-shrink: 0;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: transparent;
+            border: 2px solid var(--secondary-color);
+            transition: 0.3s;
+        }
+
+        .setting-item:hover .toggle-slider {
+            border-color: var(--primary-color);
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 4px;
+            bottom: 4px;
+            background-color: var(--secondary-color);
+            transition: 0.3s;
+        }
+
+        .setting-item:hover .toggle-slider:before {
+            background-color: var(--primary-color);
+        }
+
+        .toggle-switch input:checked + .toggle-slider {
+            background-color: var(--secondary-color);
+        }
+
+        .setting-item:hover .toggle-switch input:checked + .toggle-slider {
+            background-color: var(--primary-color);
+        }
+
+        .toggle-switch input:checked + .toggle-slider:before {
+            transform: translateX(30px);
+            background-color: var(--primary-color);
+        }
+
+        .setting-item:hover .toggle-switch input:checked + .toggle-slider:before {
+            background-color: var(--secondary-color);
+        }
+
+        /* Setting Button */
+        .setting-btn {
+            padding: 12px 25px;
+            background: transparent;
+            border: 2px solid var(--secondary-color);
+            font-size: 0.7rem;
+            font-weight: 300;
+            letter-spacing: 2px;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: var(--secondary-color);
+            text-transform: uppercase;
+            font-family: Arial, sans-serif;
+        }
+
+        .setting-btn:hover {
+            background: var(--secondary-color);
+            color: var(--primary-color);
+        }
+
+        .setting-item:hover .setting-btn {
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        .setting-item:hover .setting-btn:hover {
+            background: var(--primary-color);
+            color: var(--secondary-color);
+        }
+
+        /* Text Input */
+        .setting-input-text {
+            width: 100%;
+            max-width: 400px;
+            height: 50px;
+            border: 2px solid var(--secondary-color);
+            padding: 0 20px;
+            background: var(--primary-color);
+            color: var(--secondary-color);
+            font-family: Arial, sans-serif;
+            font-size: 0.75rem;
+            letter-spacing: 1.5px;
+            transition: all 0.2s;
+        }
+
+        .setting-input-text:focus {
+            outline: none;
+            background: var(--secondary-color);
+            color: var(--primary-color);
+        }
+
+        .setting-input-text::placeholder {
+            color: var(--secondary-color);
+            opacity: 0.3;
+        }
+
+        .setting-input-text:focus::placeholder {
+            color: var(--primary-color);
+        }
+
+        .setting-item:hover .setting-input-text {
+            border-color: var(--secondary-color);
+        }
+
+        .setting-item:hover .setting-input-text:not(:focus) {
+            color: var(--secondary-color);
+        }
+
+        /* Number Input */
+        .setting-input {
+            padding: 15px 20px;
+            background: var(--primary-color);
+            border: 2px solid var(--secondary-color);
+            font-size: 0.75rem;
+            font-weight: 300;
+            letter-spacing: 1.5px;
+            color: var(--secondary-color);
+            font-family: Arial, sans-serif;
+            width: 100%;
+            max-width: 400px;
+            height: 50px;
+            text-align: left;
+            transition: all 0.2s;
+            appearance: textfield;
+            -moz-appearance: textfield;
+        }
+
+        .setting-input::-webkit-outer-spin-button,
+        .setting-input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .setting-input:focus {
+            outline: none;
+            background: var(--secondary-color);
+            color: var(--primary-color);
+        }
+
+        .setting-input::placeholder {
+            color: var(--secondary-color);
+            opacity: 0.3;
+        }
+
+        .setting-input:focus::placeholder {
+            color: var(--primary-color);
+        }
+
+        .setting-item:hover .setting-input {
+            border-color: var(--secondary-color);
+        }
+
+        .setting-item:hover .setting-input:not(:focus) {
+            color: var(--secondary-color);
+        }
+
+        /* Save Button */
+        .settings-actions {
+            text-align: center;
+            margin-top: 40px;
+        }
+
+        .save-btn {
+            padding: 25px 60px;
+            background: var(--secondary-color);
+            border: 2px solid var(--secondary-color);
+            font-size: 0.85rem;
+            font-weight: 300;
+            letter-spacing: 3px;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: var(--primary-color);
+            text-transform: uppercase;
+            font-family: Arial, sans-serif;
+        }
+
+        .save-btn:hover {
+            background: transparent;
+            color: var(--secondary-color);
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <!-- Top Navigation -->
+        <nav class="top-nav">
+            <div class="nav-logo">
+                <span class="page-title">SETTINGS</span>
+            </div>
+            <div class="nav-actions">
+                <button class="nav-icon-btn" id="darkModeToggle" title="Toggle Dark Mode">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+                <button class="nav-icon-btn" onclick="closeWindow()">×</button>
+            </div>
+        </nav>
+
+        <!-- GAME SETTINGS SECTION -->
+        <div class="settings-section">
+            <div class="section-header">
+                <h2>GAME SETTINGS</h2>
+            </div>
+            <div class="section-content">
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <div class="setting-label">STAR CITIZEN DIRECTORY</div>
+                        <div class="setting-value" id="gamePathDisplay">Loading...</div>
+                    </div>
+                    <button class="setting-btn" onclick="editGamePath()">BROWSE</button>
+                </div>
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <div class="setting-label">IN-GAME USERNAME</div>
+                        <div class="setting-description">Your Star Citizen character name</div>
+                    </div>
+                    <input type="text" class="setting-input-text" id="ingameUsername" placeholder="ENTER USERNAME">
+                </div>
+            </div>
+        </div>
+
+        <!-- DATABASE SECTION -->
+        <div class="settings-section">
+            <div class="section-header">
+                <h2>DATABASE</h2>
+            </div>
+            <div class="section-content">
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <div class="setting-label">ADD TO DATABASE</div>
+                        <div class="setting-description">Upload kills to online database</div>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="addToDatabase">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- TRACKING SECTION -->
+        <div class="settings-section">
+            <div class="section-header">
+                <h2>TRACKING</h2>
+            </div>
+            <div class="section-content">
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <div class="setting-label">TRACK KILLS</div>
+                        <div class="setting-description">Record player kills</div>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="trackKills">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <div class="setting-label">TRACK NEARBY DEATHS</div>
+                        <div class="setting-description">Record nearby player deaths</div>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="trackNearbyDeaths">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <div class="setting-label">TRACK SHIP DESTRUCTIONS</div>
+                        <div class="setting-description">Record ship destructions</div>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="trackShipDestructions">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <div class="setting-label">TRACK SHIP CREW</div>
+                        <div class="setting-description">Record ship crew information</div>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="trackShipCrew">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <div class="setting-label">TRACK NEARBY PLAYERS</div>
+                        <div class="setting-description">Record nearby players (actor stalls)</div>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="trackNearbyPlayers">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <div class="setting-label">INCLUDE NPC KILLS</div>
+                        <div class="setting-description">Show kills involving NPCs in kill feed</div>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="includeNPCKills">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <div class="setting-label">DISPLAY WEAPON IN KILL LOG</div>
+                        <div class="setting-description">Show weapon name below kill entries</div>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="displayWeaponInKillLog">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- DISPLAY SECTION -->
+        <div class="settings-section">
+            <div class="section-header">
+                <h2>DISPLAY</h2>
+            </div>
+            <div class="section-content">
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <div class="setting-label">VISIBLE USERNAME</div>
+                        <div class="setting-description">Display name shown in kill feed</div>
+                    </div>
+                    <input type="text" class="setting-input-text" id="visibleUsername" placeholder="ENTER DISPLAY NAME">
+                </div>
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <div class="setting-label">KILL LOG DISPLAY SECONDS</div>
+                        <div class="setting-description">How long kills remain visible</div>
+                    </div>
+                    <input type="number" class="setting-input" id="killLogDisplaySeconds" min="1" max="300">
+                </div>
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <div class="setting-label">EVENT NOTIFICATION DISPLAY SECONDS</div>
+                        <div class="setting-description">How long event notifications remain visible</div>
+                    </div>
+                    <input type="number" class="setting-input" id="eventNotificationDisplaySeconds" min="1" max="300">
+                </div>
+            </div>
+        </div>
+
+        <!-- OBS STREAMING SECTION -->
+        <div class="settings-section">
+            <div class="section-header">
+                <h2>OBS STREAMING</h2>
+            </div>
+            <div class="section-content">
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <div class="setting-label">ENABLE OBS MODE</div>
+                        <div class="setting-description">Host overlays on localhost for OBS browser sources</div>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="enableOBSMode">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <div class="setting-label">KILL LOG PORT</div>
+                        <div class="setting-description">localhost port for kill log overlay</div>
+                    </div>
+                    <input type="number" class="setting-input" id="obsKillLogPort" min="1000" max="65535">
+                </div>
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <div class="setting-label">EVENT NOTIFICATION PORT</div>
+                        <div class="setting-description">localhost port for event notifications</div>
+                    </div>
+                    <input type="number" class="setting-input" id="obsEventNotificationPort" min="1000" max="65535">
+                </div>
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <div class="setting-label">CRITICAL NOTIFICATION PORT</div>
+                        <div class="setting-description">localhost port for critical notifications</div>
+                    </div>
+                    <input type="number" class="setting-input" id="obsCriticalNotificationPort" min="1000" max="65535">
+                </div>
+            </div>
+        </div>
+
+        <!-- SIMULATION SECTION -->
+        <div class="settings-section">
+            <div class="section-header">
+                <h2>SIMULATION</h2>
+            </div>
+            <div class="section-content">
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <div class="setting-label">SIMULATED LOG PATH</div>
+                        <div class="setting-value" id="simulatedLogPathDisplay">Loading...</div>
+                    </div>
+                    <button class="setting-btn" onclick="editSimulatedLogPath()">BROWSE</button>
+                </div>
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <div class="setting-label">SIMULATE LOG</div>
+                        <div class="setting-description">Enable log simulation for testing</div>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="simulateLog">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <div class="setting-label">SIMULATE LOG TIME</div>
+                        <div class="setting-description">Simulate timestamps in log</div>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="simulateLogTime">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <div class="setting-label">SIMULATED LINE SPEED</div>
+                        <div class="setting-description">Milliseconds between log lines</div>
+                    </div>
+                    <input type="number" class="setting-input" id="simulatedLineSpeed" min="1" max="10000" step="10">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Theme Controller
+        function initializeTheme() {
+            const isDarkMode = localStorage.getItem('darkMode') === 'true';
+            
+            if (isDarkMode) {
+                document.body.classList.add('dark-mode');
+                document.body.classList.remove('light-mode');
+            } else {
+                document.body.classList.add('light-mode');
+                document.body.classList.remove('dark-mode');
+            }
+        }
+
+        function toggleDarkMode() {
+            const isDarkMode = document.body.classList.contains('dark-mode');
+            
+            if (isDarkMode) {
+                document.body.classList.add('light-mode');
+                document.body.classList.remove('dark-mode');
+            } else {
+                document.body.classList.add('dark-mode');
+                document.body.classList.remove('light-mode');
+            }
+            
+            const newDarkMode = document.body.classList.contains('dark-mode');
+            localStorage.setItem('darkMode', newDarkMode);
+            sendToCS({ action: 'themeChanged', darkMode: newDarkMode });
+        }
+
+        // Initialize theme on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeTheme();
+            document.getElementById('darkModeToggle').addEventListener('click', toggleDarkMode);
+        });
+
+        // C# <-> JS Bridge
+        window.chrome.webview.addEventListener('message', event => {
+            const data = event.data;
+            
+            if (data.action === 'loadSettings') {
+                // All values come from C# Config class which has defaults defined
+                document.getElementById('gamePathDisplay').textContent = data.gamePath || '';
+                document.getElementById('ingameUsername').value = data.ingameUsername || '';
+                document.getElementById('visibleUsername').value = data.visibleUsername || '';
+                document.getElementById('simulatedLogPathDisplay').textContent = data.simulatedLogPath || '';
+                document.getElementById('addToDatabase').checked = data.addToDatabase;
+                document.getElementById('trackKills').checked = data.trackKills;
+                document.getElementById('trackNearbyDeaths').checked = data.trackNearbyDeaths;
+                document.getElementById('trackShipDestructions').checked = data.trackShipDestructions;
+                document.getElementById('trackShipCrew').checked = data.trackShipCrew;
+                document.getElementById('trackNearbyPlayers').checked = data.trackNearbyPlayers;
+                document.getElementById('includeNPCKills').checked = data.includeNPCKills;
+                document.getElementById('displayWeaponInKillLog').checked = data.displayWeaponInKillLog;
+                document.getElementById('simulateLog').checked = data.simulateLog;
+                document.getElementById('simulateLogTime').checked = data.simulateLogTime;
+                document.getElementById('killLogDisplaySeconds').value = data.killLogDisplaySeconds;
+                document.getElementById('eventNotificationDisplaySeconds').value = data.eventNotificationDisplaySeconds;
+                document.getElementById('enableOBSMode').checked = data.enableOBSMode;
+                document.getElementById('obsKillLogPort').value = data.obsKillLogPort;
+                document.getElementById('obsEventNotificationPort').value = data.obsEventNotificationPort;
+                document.getElementById('obsCriticalNotificationPort').value = data.obsCriticalNotificationPort;
+                document.getElementById('simulatedLineSpeed').value = data.simulatedLineSpeed;
+                
+                // Load dark mode setting and apply theme
+                const isDarkMode = data.darkMode !== undefined ? data.darkMode : true;
+                if (isDarkMode) {
+                    document.body.classList.add('dark-mode');
+                    document.body.classList.remove('light-mode');
+                } else {
+                    document.body.classList.add('light-mode');
+                    document.body.classList.remove('dark-mode');
+                }
+                localStorage.setItem('darkMode', isDarkMode);
+            }
+        });
+
+        function sendToCS(data) {
+            window.chrome.webview.postMessage(data);
+        }
+
+        function closeWindow() {
+            // Auto-save settings on close
+            sendToCS({
+                action: 'save',
+                settings: {
+                    gamePath: document.getElementById('gamePathDisplay').textContent,
+                    ingameUsername: document.getElementById('ingameUsername').value,
+                    visibleUsername: document.getElementById('visibleUsername').value,
+                    simulatedLogPath: document.getElementById('simulatedLogPathDisplay').textContent,
+                    addToDatabase: document.getElementById('addToDatabase').checked,
+                    trackKills: document.getElementById('trackKills').checked,
+                    trackNearbyDeaths: document.getElementById('trackNearbyDeaths').checked,
+                    trackShipDestructions: document.getElementById('trackShipDestructions').checked,
+                    trackShipCrew: document.getElementById('trackShipCrew').checked,
+                    trackNearbyPlayers: document.getElementById('trackNearbyPlayers').checked,
+                    includeNPCKills: document.getElementById('includeNPCKills').checked,
+                    displayWeaponInKillLog: document.getElementById('displayWeaponInKillLog').checked,
+                    killLogDisplaySeconds: parseInt(document.getElementById('killLogDisplaySeconds').value),
+                    eventNotificationDisplaySeconds: parseInt(document.getElementById('eventNotificationDisplaySeconds').value),
+                    enableOBSMode: document.getElementById('enableOBSMode').checked,
+                    obsKillLogPort: parseInt(document.getElementById('obsKillLogPort').value),
+                    obsEventNotificationPort: parseInt(document.getElementById('obsEventNotificationPort').value),
+                    obsCriticalNotificationPort: parseInt(document.getElementById('obsCriticalNotificationPort').value),
+                    simulateLog: document.getElementById('simulateLog').checked,
+                    simulateLogTime: document.getElementById('simulateLogTime').checked,
+                    simulatedLineSpeed: parseFloat(document.getElementById('simulatedLineSpeed').value)
+                }
+            });
+            
+            sendToCS({ action: 'close' });
+        }
+
+        function editGamePath() {
+            sendToCS({ action: 'browseGamePath' });
+        }
+
+        function editSimulatedLogPath() {
+            sendToCS({ action: 'browseSimulatedLogPath' });
+        }
+
+        // Window dragging
+        document.addEventListener('mousedown', (e) => {
+            // Don't drag if clicking on interactive elements
+            if (e.target.closest('.nav-icon-btn') || 
+                e.target.closest('.setting-btn') || 
+                e.target.closest('.toggle-switch') ||
+                e.target.closest('.setting-input') ||
+                e.target.closest('.setting-input-text')) {
+                return;
+            }
+            
+            // Don't drag if clicking on scrollbar (within 20px of right edge)
+            if (e.clientX > window.innerWidth - 20) {
+                return;
+            }
+            
+            sendToCS({ action: 'startDrag' });
+        });
+    </script>
+</body>
+</html>

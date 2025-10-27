@@ -1,0 +1,126 @@
+/**
+ * Shared Kill Log Renderer
+ * This module contains all the logic for rendering kill log entries
+ * Used by both the window version and OBS version
+ */
+
+class KillLogRenderer {
+    constructor(contentElement, options = {}) {
+        this.content = contentElement;
+        this.killEntries = [];
+        
+        // Configuration
+        this.displayDuration = options.displayDuration || 30000;
+        this.displayWeapon = options.displayWeapon !== undefined ? options.displayWeapon : true;
+        this.playerIngameName = options.playerIngameName || '';
+        this.playerDisplayName = options.playerDisplayName || '';
+        this.maxEntries = options.maxEntries || 5;
+    }
+
+    setConfig(config) {
+        if (config.displayDuration !== undefined) {
+            this.displayDuration = config.displayDuration;
+        }
+        if (config.displayWeapon !== undefined) {
+            this.displayWeapon = config.displayWeapon;
+        }
+        if (config.playerIngameName !== undefined) {
+            this.playerIngameName = config.playerIngameName;
+        }
+        if (config.playerDisplayName !== undefined) {
+            this.playerDisplayName = config.playerDisplayName;
+        }
+        if (config.maxEntries !== undefined) {
+            this.maxEntries = config.maxEntries;
+        }
+    }
+
+    escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    addKillEntry(killer, victim, weapon, isPlayerKill) {
+        const entry = document.createElement('div');
+        entry.className = 'kill-entry' + (isPlayerKill ? ' player-kill' : '');
+        
+        const killText = document.createElement('div');
+        killText.className = 'kill-text';
+        
+        let killHTML;
+        
+        // Helper function for case-insensitive name comparison
+        const isPlayerName = (name) => {
+            if (!this.playerIngameName || !name) return false;
+            return name.toLowerCase() === this.playerIngameName.toLowerCase();
+        };
+        
+        // Handle nearby death (no killer)
+        if (!killer || killer === null || killer === '') {
+            const victimIsPlayer = isPlayerName(victim);
+            const displayVictim = victimIsPlayer ? this.playerDisplayName : victim;
+            
+            killHTML = `<span class="${victimIsPlayer ? 'player-name' : ''}">${this.escapeHtml(displayVictim)}</span> died nearby`;
+        } else {
+            // Normal kill format
+            const killerIsPlayer = isPlayerName(killer);
+            const victimIsPlayer = isPlayerName(victim);
+            
+            const displayKiller = killerIsPlayer ? this.playerDisplayName : killer;
+            const displayVictim = victimIsPlayer ? this.playerDisplayName : victim;
+            
+            killHTML = `
+                <span class="${killerIsPlayer ? 'killer player-name' : 'killer'}">${this.escapeHtml(displayKiller)}</span>
+                <span class="separator"> ➜ </span>
+                <span class="${victimIsPlayer ? 'victim player-name' : 'victim'}">${this.escapeHtml(displayVictim)}</span>
+            `;
+            
+            if (this.displayWeapon && weapon) {
+                killHTML += `<div class="weapon">${this.escapeHtml(weapon)}</div>`;
+            }
+        }
+        
+        killText.innerHTML = killHTML;
+        entry.appendChild(killText);
+        this.content.insertBefore(entry, this.content.firstChild);
+
+        const entryData = {
+            element: entry,
+            timestamp: Date.now()
+        };
+        this.killEntries.push(entryData);
+
+        setTimeout(() => {
+            this.removeKillEntry(entryData);
+        }, this.displayDuration);
+
+        // Limit to max entries, remove the oldest one
+        if (this.killEntries.length > this.maxEntries) {
+            this.removeKillEntry(this.killEntries[0]);
+        }
+    }
+
+    removeKillEntry(entryData) {
+        const index = this.killEntries.indexOf(entryData);
+        if (index > -1) {
+            this.killEntries.splice(index, 1);
+            entryData.element.classList.add('fade-out');
+            setTimeout(() => {
+                if (entryData.element.parentNode) {
+                    entryData.element.parentNode.removeChild(entryData.element);
+                }
+            }, 500);
+        }
+    }
+
+    clear() {
+        this.content.innerHTML = '';
+        this.killEntries = [];
+    }
+}
+
+// Export for use in other scripts
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = KillLogRenderer;
+}

@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nearby Players - OBS</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: transparent;
+            color: #ffffff;
+            overflow: hidden;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        .content-area {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-height: 100vh;
+            overflow-y: auto;
+        }
+
+        .player-entry {
+            background: transparent;
+            border: none;
+            padding: 12px;
+            opacity: 0;
+            transform: translateX(-20px);
+            transition: all 0.3s ease-out;
+        }
+
+        .player-entry.show {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .player-entry.hide {
+            opacity: 0;
+            transform: translateX(-20px);
+        }
+
+        .player-name {
+            color: #d05252;
+            font-size: 14px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.9), 0 0 8px rgba(0, 0, 0, 0.8);
+        }
+
+        .player-info {
+            font-size: 11px;
+            letter-spacing: 1px;
+            opacity: 0.7;
+            color: #aba9a2;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.9);
+        }
+    </style>
+</head>
+<body>
+    <div class="content-area" id="contentArea"></div>
+
+    <script>
+        let players = new Map();
+        let eventSource = null;
+        let reconnectAttempts = 0;
+        const maxReconnectDelay = 30000;
+        const cleanupInterval = 30000; // 30 seconds
+        const playerTimeout = 300000; // 5 minutes
+
+        function connectSSE() {
+            if (eventSource) {
+                eventSource.close();
+            }
+
+            console.log('Connecting to SSE...');
+            eventSource = new EventSource('/events');
+
+            eventSource.addEventListener('playerstall', (event) => {
+                console.log('Received player stall:', event.data);
+                const data = JSON.parse(event.data);
+                addPlayer(data.playerName, data.stallType, data.stallLength);
+                reconnectAttempts = 0;
+            });
+
+            eventSource.addEventListener('examples', (event) => {
+                console.log('Received examples:', event.data);
+                const data = JSON.parse(event.data);
+                const duration = data.duration || 120000;
+                
+                // Add example players
+                addPlayer('Player1', 'Nearby', 'Short');
+                setTimeout(() => addPlayer('Player2', 'Nearby', 'Medium'), 500);
+                setTimeout(() => addPlayer('Player3', 'Nearby', 'Long'), 1000);
+                setTimeout(() => addPlayer('AllyName', 'Nearby', 'Short'), 1500);
+
+                // Clear examples after duration
+                setTimeout(() => {
+                    players.clear();
+                    render();
+                }, duration);
+            });
+
+            eventSource.addEventListener('ping', (event) => {
+                // Keep-alive ping, ignore
+            });
+
+            eventSource.onopen = () => {
+                console.log('SSE connection opened');
+            };
+
+            eventSource.onerror = (error) => {
+                console.error('SSE connection error, retrying...', error);
+                eventSource.close();
+                
+                reconnectAttempts++;
+                const delay = Math.min(1000 * Math.pow(2, reconnectAttempts - 1), maxReconnectDelay);
+                
+                console.log(`Retrying in ${delay}ms...`);
+                setTimeout(() => {
+                    connectSSE();
+                }, delay);
+            };
+        }
+
+        function addPlayer(playerName, stallType, stallLength) {
+            const now = Date.now();
+            
+            if (players.has(playerName)) {
+                const player = players.get(playerName);
+                player.lastSeen = now;
+                player.count++;
+            } else {
+                players.set(playerName, {
+                    name: playerName,
+                    lastSeen: now,
+                    count: 1
+                });
+            }
+
+            render();
+        }
+
+        function render() {
+            const content = document.getElementById('contentArea');
+            
+            if (players.size === 0) {
+                content.innerHTML = '';
+                return;
+            }
+
+            const sorted = Array.from(players.values()).sort((a, b) => b.lastSeen - a.lastSeen);
+
+            // Build HTML for all players
+            const html = sorted.map(player => {
+                const timeSince = Date.now() - player.lastSeen;
+                const timeText = timeSince < 60000 
+                    ? Math.floor(timeSince / 1000) + 's ago'
+                    : Math.floor(timeSince / 60000) + 'm ago';
+
+                return `
+                    <div class="player-entry show" data-player="${player.name}">
+                        <div class="player-name">${escapeHtml(player.name)}</div>
+                        <div class="player-info">${timeText} • x${player.count}</div>
+                    </div>
+                `;
+            }).join('');
+
+            content.innerHTML = html;
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function cleanupOldPlayers() {
+            const cutoffTime = Date.now() - playerTimeout;
+            let removed = 0;
+
+            for (const [name, player] of players.entries()) {
+                if (player.lastSeen < cutoffTime) {
+                    players.delete(name);
+                    removed++;
+                }
+            }
+
+            if (removed > 0) {
+                console.log(`Cleaned up ${removed} old player entries`);
+                render();
+            }
+        }
+
+        // Update time displays every second
+        setInterval(() => {
+            if (players.size > 0) {
+                render();
+            }
+        }, 1000);
+
+        // Cleanup old players periodically
+        setInterval(cleanupOldPlayers, cleanupInterval);
+
+        // Connect immediately
+        connectSSE();
+    </script>
+</body>
+</html>
