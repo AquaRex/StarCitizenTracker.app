@@ -2,7 +2,9 @@
 let leaderboardData = [];
 let globalStats = {
     totalKills: 0,
-    totalDeaths: 0
+    totalDeaths: 0,
+    bestWeapon: '-',
+    todayBestStreak: 0
 };
 
 function initializeLeaderboard() {
@@ -44,6 +46,7 @@ async function loadLeaderboardData() {
     try {
         showLoading();
         let response;
+        let killsResponse;
         const currentUser = sessionStorage.getItem('username');
         const currentPassword = sessionStorage.getItem('password');
         
@@ -68,6 +71,7 @@ async function loadLeaderboardData() {
         }
         
         const data = await response.json();
+        
         processLeaderboardData(data);
         showLeaderboard();
         
@@ -80,7 +84,9 @@ async function loadLeaderboardData() {
 function processLeaderboardData(data) {
     globalStats = {
         totalKills: 0,
-        totalDeaths: 0
+        totalDeaths: 0,
+        bestWeapon: '-',
+        todayBestStreak: 0
     };
     
     // Process each player's data
@@ -102,6 +108,35 @@ function processLeaderboardData(data) {
         };
     });
     leaderboardData.sort((a, b) => b.kdRatio - a.kdRatio);
+    
+    // Fetch best weapon and today's best streak from API
+    fetchGlobalStats();
+}
+
+async function fetchGlobalStats() {
+    try {
+        // Fetch best weapon
+        const weaponResponse = await fetch(getApiUrl('/api/kills/stats/best-weapon'));
+        if (weaponResponse.ok) {
+            const weaponData = await weaponResponse.json();
+            if (weaponData && weaponData.weapon) {
+                globalStats.bestWeapon = formatWeapon(weaponData.weapon);
+                updateGlobalStats();
+            }
+        }
+        
+        // Fetch today's best streak
+        const streakResponse = await fetch(getApiUrl('/api/kills/stats/today-best-streak'));
+        if (streakResponse.ok) {
+            const streakData = await streakResponse.json();
+            if (streakData && streakData.bestStreak !== undefined) {
+                globalStats.todayBestStreak = streakData.bestStreak;
+                updateGlobalStats();
+            }
+        }
+    } catch (error) {
+        console.error('Error fetching global stats:', error);
+    }
 }
 
 function calculateBestStreak(kills) {
@@ -157,6 +192,8 @@ function showLeaderboard() {
 function updateGlobalStats() {
     document.getElementById('globalKills').textContent = globalStats.totalKills.toLocaleString();
     document.getElementById('globalDeaths').textContent = globalStats.totalDeaths.toLocaleString();
+    document.getElementById('bestWeapon').textContent = globalStats.bestWeapon;
+    document.getElementById('todayBestStreak').textContent = globalStats.todayBestStreak;
 }
 
 function generateLeaderboardEntries() {
