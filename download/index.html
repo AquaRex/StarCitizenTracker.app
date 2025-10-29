@@ -47,6 +47,18 @@
         .download-button:active {
             transform: scale(0.98);
         }
+
+        .download-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .download-status {
+            margin-top: 20px;
+            font-size: 1.2em;
+            color: var(--secondary-color);
+            opacity: 0.8;
+        }
     </style>
 </head>
 <body>
@@ -57,9 +69,11 @@
         <div class="download-container">
             <h1 class="download-title">STAR TRACKER</h1>
 
-            <a href="starcitizentracker.zip" class="download-button" download>
+            <button id="downloadButton" class="download-button">
                 DOWNLOAD
-            </a>
+            </button>
+
+            <div id="downloadStatus" class="download-status"></div>
         </div>
     </div>
 
@@ -78,7 +92,57 @@
                 showUserMenu: false,
                 activePage: 'download'
             });
+
+            // Setup download button
+            document.getElementById('downloadButton').addEventListener('click', downloadFromAzure);
         });
+
+        async function downloadFromAzure() {
+            const button = document.getElementById('downloadButton');
+            const status = document.getElementById('downloadStatus');
+
+            try {
+                button.disabled = true;
+                status.textContent = 'Preparing download...';
+
+                // Download through API endpoint
+                const apiUrl = `${API_CONFIG.BASE_URL}/api/update/download`;
+                
+                status.textContent = 'Downloading...';
+                
+                const response = await fetch(apiUrl);
+                
+                if (!response.ok) {
+                    throw new Error('Download failed');
+                }
+
+                const blob = await response.blob();
+                
+                // Create download link
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'StarCitizenTracker.zip';
+                document.body.appendChild(a);
+                a.click();
+                
+                // Cleanup
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+                
+                status.textContent = 'Download complete!';
+                
+                setTimeout(() => {
+                    button.disabled = false;
+                    status.textContent = '';
+                }, 3000);
+                
+            } catch (error) {
+                console.error('Download error:', error);
+                status.textContent = 'Download failed. Please try again.';
+                button.disabled = false;
+            }
+        }
     </script>
 </body>
 </html>
