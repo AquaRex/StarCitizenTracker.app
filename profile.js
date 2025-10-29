@@ -300,11 +300,27 @@ function updateStats() {
         }
     }
     
+    // Calculate most used weapon from actual kills
+    const weaponCounts = {};
+    profileKills.forEach(k => {
+        const weapon = k.weapon || 'Unknown';
+        weaponCounts[weapon] = (weaponCounts[weapon] || 0) + 1;
+    });
+    
+    let mostUsedWeapon = 'None';
+    let maxCount = 0;
+    for (const [weapon, count] of Object.entries(weaponCounts)) {
+        if (count > maxCount) {
+            maxCount = count;
+            mostUsedWeapon = weapon;
+        }
+    }
+    
     document.getElementById('stat-kills').textContent = kills;
     document.getElementById('stat-deaths').textContent = deaths;
     document.getElementById('stat-kd').textContent = kdRatio;
     document.getElementById('stat-streak').textContent = bestStreak;
-    document.getElementById('stat-weapon').textContent = formatWeapon(profileData.favoriteWeapon) || 'NONE';
+    document.getElementById('stat-weapon').textContent = formatWeapon(mostUsedWeapon);
 }
 
 // Show error message
