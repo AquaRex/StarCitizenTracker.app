@@ -275,17 +275,30 @@ function updateStats() {
     const deaths = profileData.totalDeaths || 0;
     const kdRatio = deaths > 0 ? (kills / deaths).toFixed(2) : kills.toFixed(2);
     
-    // Calculate killstreak from kills data
+    // Calculate killstreak (kills within 30 seconds)
     let bestStreak = 0;
     let currentStreak = 0;
     
-    // Sort kills by time to calculate streaks
-    const sortedKills = [...profileKills].sort((a, b) => new Date(a.killTime) - new Date(b.killTime));
-    
-    sortedKills.forEach(kill => {
-        currentStreak++;
-        bestStreak = Math.max(bestStreak, currentStreak);
-    });
+    if (profileKills.length > 0) {
+        // Sort kills by time to calculate streaks
+        const sortedKills = [...profileKills].sort((a, b) => new Date(a.killTime) - new Date(b.killTime));
+        
+        currentStreak = 1;
+        bestStreak = 1;
+        
+        for (let i = 1; i < sortedKills.length; i++) {
+            const prevTime = new Date(sortedKills[i - 1].killTime);
+            const currTime = new Date(sortedKills[i].killTime);
+            const diffSeconds = (currTime - prevTime) / 1000;
+            
+            if (diffSeconds <= 30) {
+                currentStreak++;
+                bestStreak = Math.max(bestStreak, currentStreak);
+            } else {
+                currentStreak = 1;
+            }
+        }
+    }
     
     document.getElementById('stat-kills').textContent = kills;
     document.getElementById('stat-deaths').textContent = deaths;
