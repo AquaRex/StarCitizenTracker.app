@@ -135,6 +135,26 @@
             display: none;
         }
 
+        .version-info {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .version-number {
+            font-size: 0.8em;
+            letter-spacing: 1px;
+            color: var(--secondary-color);
+            opacity: 0.6;
+            margin-bottom: 4px;
+        }
+
+        .version-date {
+            font-size: 0.7em;
+            letter-spacing: 1px;
+            color: var(--secondary-color);
+            opacity: 0.5;
+        }
+
         @media (max-width: 1024px) {
             .features-container {
                 grid-template-columns: 1fr;
@@ -200,6 +220,10 @@
 
             <div class="download-action">
                 <div class="download-button-wrapper">
+                    <div class="version-info" id="versionInfo">
+                        <div class="version-number">Loading...</div>
+                        <div class="version-date">Fetching info...</div>
+                    </div>
                     <button id="downloadButton" class="download-button">DOWNLOAD</button>
                     <div id="downloadStatus" class="download-status"></div>
                 </div>
@@ -292,7 +316,55 @@
                     downloadFromAzure();
                 });
             }
+
+            // Load latest version info
+            loadLatestVersion();
         });
+
+        async function loadLatestVersion() {
+            try {
+                const response = await fetch('./changelog/index.html');
+                if (!response.ok) {
+                    throw new Error('Failed to fetch changelog');
+                }
+                
+                const html = await response.text();
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                
+                // Find the first version container
+                const firstVersionContainer = doc.querySelector('.version-container');
+                if (firstVersionContainer) {
+                    const versionNumber = firstVersionContainer.querySelector('.version-number')?.textContent?.trim();
+                    const versionDate = firstVersionContainer.querySelector('.version-date')?.textContent?.trim();
+                    
+                    if (versionNumber && versionDate) {
+                        const versionInfo = document.getElementById('versionInfo');
+                        if (versionInfo) {
+                            // Extract just the version number part (remove "VERSION " prefix if present)
+                            const cleanVersion = versionNumber.replace(/^VERSION\s*/i, '');
+                            versionInfo.innerHTML = `
+                                <div class="version-number">VERSION ${cleanVersion}</div>
+                                <div class="version-date">${versionDate}</div>
+                            `;
+                        }
+                    } else {
+                        throw new Error('Version info not found in changelog');
+                    }
+                } else {
+                    throw new Error('No version containers found in changelog');
+                }
+            } catch (error) {
+                console.error('Error loading version info:', error);
+                const versionInfo = document.getElementById('versionInfo');
+                if (versionInfo) {
+                    versionInfo.innerHTML = `
+                        <div class="version-number">VERSION AVAILABLE</div>
+                        <div class="version-date">Download Ready</div>
+                    `;
+                }
+            }
+        }
 
         async function downloadFromAzure() {
             console.log('downloadFromAzure function called');
