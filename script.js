@@ -35,38 +35,24 @@ function initializeComponents() {
     });
 }
 
-// Initialize
 window.addEventListener('DOMContentLoaded', () => {
-    // Check if user is logged in
     if (!username || !userId) {
-        // Redirect to leaderboard (public landing page) if not authenticated
         window.location.href = 'leaderboard.html';
         return;
     }
 });
 
-// Main initialization function
 function initializeApp() {
-    // Check if components are available
     if (typeof generateNavigation === 'undefined') {
         return;
     }
     
-    // Initialize components
     initializeComponents();
-    
-    // Initialize dark mode
     initDarkMode();
-    
-    // Initialize account dropdown
     initAccountDropdown();
-    
-    // Check public profile status and show profile button if enabled
     checkPublicProfile();
-    
     loadData();
     
-    // Close dropdowns when clicking outside
     document.addEventListener('click', (e) => {
         if (!e.target.closest('.custom-select')) {
             document.querySelectorAll('.custom-select.open').forEach(select => {
@@ -79,24 +65,18 @@ function initializeApp() {
     });
 }
 
-// Initialize when components are ready
 window.addEventListener('componentsReady', initializeApp);
 
-// Also try to initialize immediately in case components are already loaded
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => {
-        // Small delay to ensure components.js has executed
         setTimeout(initializeApp, 50);
     });
 } else {
-    // Document already loaded, try immediately
     setTimeout(initializeApp, 10);
 }
 
-// Load all data from API
 async function loadData() {
     try {
-        // Use secure API request
         const response = await makeSecureApiRequest(API_CONFIG.ENDPOINTS.KILLS);
         
         if (!response.ok) {
@@ -107,17 +87,11 @@ async function loadData() {
         
         allKills = await response.json();
         
-        // Filter for player
         myKills = allKills.filter(k => k.killerUser.toLowerCase() === PLAYER_NAME.toLowerCase());
         myDeaths = allKills.filter(k => k.victimUser.toLowerCase() === PLAYER_NAME.toLowerCase());
         
-        // Update stats
         updateStats();
-        
-        // Populate filters
         populateFilters();
-        
-        // Show initial view
         renderView();
         
     } catch (error) {
@@ -131,7 +105,6 @@ async function loadData() {
     }
 }
 
-// Update statistics
 function updateStats() {
     document.getElementById('stat-kills').textContent = myKills.length;
     document.getElementById('stat-deaths').textContent = myDeaths.length;

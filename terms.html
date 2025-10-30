@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TERMS OF SERVICE - STAR TRACKER</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="auth.css">
+    <link rel="stylesheet" href="color-config.css">
+</head>
+<body>
+    <div class="main-container">
+        <!-- Header with Dark Mode Toggle -->
+        <header class="header" style="position: relative; display: flex; justify-content: center; align-items: center; padding: 40px 20px;">
+            <h1>STAR CITIZEN TRACKER</h1>
+            <button class="btn btn-icon" id="darkModeToggle" title="Toggle Dark Mode" style="position: absolute; right: 40px;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="5"></circle>
+                    <line x1="12" y1="1" x2="12" y2="3"></line>
+                    <line x1="12" y1="21" x2="12" y2="23"></line>
+                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                    <line x1="1" y1="12" x2="3" y2="12"></line>
+                    <line x1="21" y1="12" x2="23" y2="12"></line>
+                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                </svg>
+            </button>
+        </header>
+
+        <!-- Terms Container -->
+        <div class="auth-container" style="max-width: 900px;">
+            <div class="auth-header">
+                <h2>TERMS OF SERVICE</h2>
+            </div>
+
+            <div class="auth-form">
+                <!-- Service Description -->
+                <div class="form-group">
+                    <label class="form-label">1. SERVICE DESCRIPTION</label>
+                    <div style="padding: 25px; border: 2px solid var(--secondary-color); background: transparent;">
+                        <p style="margin: 0; color: var(--secondary-color); font-size: 0.9rem; line-height: 1.6;">
+                            Star Citizen Tracker monitors your Game.log file to extract and display gaming activity. 
+                            The service provides an optional overlay interface and maintains statistics based on your gameplay data.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Data Collection -->
+                <div class="form-group">
+                    <label class="form-label">2. DATA COLLECTION AND USE</label>
+                    <div style="border: 2px solid var(--secondary-color);">
+                        <div style="padding: 20px; border-bottom: 2px solid var(--secondary-color);">
+                            <p style="margin: 0; color: var(--secondary-color); font-size: 0.85rem; line-height: 1.5;">
+                                <strong>GAME LOG DATA:</strong> We collect and store log lines from your Star Citizen Game.log file, 
+                                linked to your user account for tracking purposes.
+                            </p>
+                        </div>
+                        <div style="padding: 20px; border-bottom: 2px solid var(--secondary-color);">
+                            <p style="margin: 0; color: var(--secondary-color); font-size: 0.85rem; line-height: 1.5;">
+                                <strong>EMAIL ADDRESS:</strong> Required for account verification to prevent spam and abuse, 
+                                and to enable password recovery. We do not use your email for marketing.
+                            </p>
+                        </div>
+                        <div style="padding: 20px; border-bottom: 2px solid var(--secondary-color);">
+                            <p style="margin: 0; color: var(--secondary-color); font-size: 0.85rem; line-height: 1.5;">
+                                <strong>PASSWORD:</strong> Stored in encrypted format and cannot be read by administrators or staff.
+                            </p>
+                        </div>
+                        <div style="padding: 20px;">
+                            <p style="margin: 0; color: var(--secondary-color); font-size: 0.85rem; line-height: 1.5;">
+                                <strong>PUBLIC PROFILES:</strong> If you set your profile to public, your gameplay statistics 
+                                may be included in global leaderboards and community features.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Data Sharing -->
+                <div class="form-group">
+                    <label class="form-label">3. DATA SHARING</label>
+                    <div style="padding: 25px; border: 2px solid var(--secondary-color);">
+                        <p style="margin: 0; color: var(--secondary-color); font-size: 0.9rem; line-height: 1.6;">
+                            We do not sell, trade, or share your personal information with third parties. 
+                            Your data is used solely for service functionality and public statistics (if you opt for a public profile).
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Account Security -->
+                <div class="form-group">
+                    <label class="form-label">4. ACCOUNT SECURITY</label>
+                    <div style="padding: 25px; border: 2px solid var(--secondary-color);">
+                        <p style="margin: 0; color: var(--secondary-color); font-size: 0.9rem; line-height: 1.6;">
+                            You are responsible for maintaining the security of your account credentials. 
+                            Choose a strong, unique password and keep your login information confidential.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Service Availability -->
+                <div class="form-group">
+                    <label class="form-label">5. SERVICE AVAILABILITY</label>
+                    <div style="padding: 25px; border: 2px solid var(--secondary-color);">
+                        <p style="margin: 0; color: var(--secondary-color); font-size: 0.9rem; line-height: 1.6;">
+                            The service is provided "as-is" without guarantees of uptime or availability. 
+                            We may suspend or discontinue the service at any time with or without notice.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Limitation of Liability -->
+                <div class="form-group">
+                    <label class="form-label">6. LIMITATION OF LIABILITY</label>
+                    <div style="padding: 25px; border: 2px solid var(--secondary-color);">
+                        <p style="margin: 0; color: var(--secondary-color); font-size: 0.9rem; line-height: 1.6;">
+                            <strong>IMPORTANT:</strong> To the fullest extent permitted by law, Star Citizen Tracker and its operators shall not be liable for any damages, 
+                            including but not limited to data loss, security breaches, or unauthorized access to your information. 
+                            You use this service at your own risk.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- User Conduct -->
+                <div class="form-group">
+                    <label class="form-label">7. USER CONDUCT</label>
+                    <div style="padding: 25px; border: 2px solid var(--secondary-color);">
+                        <p style="margin: 0; color: var(--secondary-color); font-size: 0.9rem; line-height: 1.6;">
+                            You agree to use the service responsibly and not engage in activities that could harm the service or other users, 
+                            including but not limited to attempting to breach security or create multiple accounts to circumvent limitations.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Changes to Terms -->
+                <div class="form-group">
+                    <label class="form-label">8. CHANGES TO TERMS</label>
+                    <div style="padding: 25px; border: 2px solid var(--secondary-color);">
+                        <p style="margin: 0; color: var(--secondary-color); font-size: 0.9rem; line-height: 1.6;">
+                            These terms may be updated at any time. Continued use of the service constitutes acceptance of any changes.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Contact -->
+                <div class="form-group">
+                    <label class="form-label">9. CONTACT</label>
+                    <div style="padding: 25px; border: 2px solid var(--secondary-color);">
+                        <p style="margin: 0; color: var(--secondary-color); font-size: 0.9rem; line-height: 1.6;">
+                            For questions about these terms, please contact us through the appropriate channels provided in the application.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Agreement Notice -->
+                <div class="form-message show info" style="text-align: center;">
+                    <strong>By registering and using this service, you acknowledge that you have read, understood, and agree to be bound by these terms.</strong>
+                    <br><br>
+                    Last Updated: October 30, 2025
+                </div>
+            </div>
+
+            <div class="auth-footer">
+                <a href="register.html" class="auth-link">← BACK TO REGISTRATION</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="auth.js"></script>
+    <script src="color-config.js"></script>
+</body>
+</html>

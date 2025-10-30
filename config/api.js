@@ -44,7 +44,6 @@ async function makeSecureApiRequest(endpoint, options = {}) {
         'Content-Type': 'application/json',
     };
     
-    // Add Bearer token if available
     if (token) {
         defaultHeaders['Authorization'] = `Bearer ${token}`;
     }
@@ -74,7 +73,6 @@ async function makeSecureApiRequest(endpoint, options = {}) {
             sessionStorage.removeItem('username');
             sessionStorage.removeItem('userId');
             sessionStorage.removeItem('inGameName');
-            // Only redirect to login if not already on a public page
             if (!window.location.pathname.includes('login.html') && 
                 !window.location.pathname.includes('leaderboard.html') &&
                 !window.location.pathname.includes('register.html')) {

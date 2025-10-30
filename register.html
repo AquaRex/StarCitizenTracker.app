@@ -108,6 +108,21 @@
                     >
                 </div>
 
+                <div class="form-group">
+                    <div style="display: flex; align-items: center; gap: 15px; padding: 20px 0;">
+                        <input 
+                            type="checkbox" 
+                            id="acceptTerms" 
+                            name="acceptTerms" 
+                            required
+                            style="width: 18px; height: 18px; border: 2px solid var(--secondary-color); background: transparent; accent-color: var(--secondary-color);"
+                        >
+                        <label for="acceptTerms" style="color: var(--secondary-color); font-size: 0.8rem; letter-spacing: 2px; opacity: 0.8; cursor: pointer; line-height: 1.4;">
+                            I HAVE READ AND AGREE TO THE <a href="terms.html" target="_blank" class="auth-link">TERMS OF SERVICE</a>
+                        </label>
+                    </div>
+                </div>
+
                 <div class="form-message" id="formMessage"></div>
 
                 <button type="submit" class="auth-button" id="registerButton">

@@ -81,6 +81,7 @@ async function handleRegister(event) {
     const confirmPassword = document.getElementById('confirmPassword').value;
     const inGameName = document.getElementById('inGameName').value.trim();
     const email = document.getElementById('email').value.trim();
+    const acceptTerms = document.getElementById('acceptTerms').checked;
     const button = document.getElementById('registerButton');
     const buttonText = document.getElementById('buttonText');
     const messageDiv = document.getElementById('formMessage');
@@ -91,6 +92,11 @@ async function handleRegister(event) {
     // Validate input
     if (!username || !password || !confirmPassword || !inGameName || !email) {
         showMessage(messageDiv, 'Please fill in all required fields', 'error');
+        return;
+    }
+    
+    if (!acceptTerms) {
+        showMessage(messageDiv, 'You must accept the Terms of Service to register', 'error');
         return;
     }
     
