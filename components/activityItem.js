@@ -7,9 +7,17 @@ function generateActivityItem(activity, options = {}) {
     const formatDateTime = (dateString) => {
         const date = new Date(dateString);
         if (timeFormat === 'short') {
-            return date.toLocaleTimeString();
+            return date.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
         }
-        return date.toLocaleString();
+        return date.toLocaleString('en-GB', { 
+            year: 'numeric', 
+            month: 'short', 
+            day: 'numeric', 
+            hour: '2-digit', 
+            minute: '2-digit', 
+            second: '2-digit',
+            hour12: false 
+        });
     };
 
     const formatWeapon = (weapon) => {
