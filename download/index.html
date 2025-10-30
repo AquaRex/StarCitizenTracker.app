@@ -7,57 +7,139 @@
     <link rel="stylesheet" href="../styles.css">
     <link rel="stylesheet" href="../color-config.css">
     <style>
-        .download-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 60vh;
+        .download-section {
+            margin-bottom: 0;
+        }
+
+        .section-header {
+            padding: 25px 40px;
+            border: 2px solid var(--secondary-color);
+            background: var(--secondary-color);
+            margin-bottom: 40px;
             text-align: center;
         }
 
-        .download-title {
-            font-size: 4em;
+        .section-title {
+            font-size: 3em;
             font-weight: bold;
-            margin-bottom: 60px;
+            letter-spacing: 4px;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+
+        .section-subtitle {
+            font-size: 1em;
+            letter-spacing: 2px;
+            opacity: 0.7;
+            color: var(--primary-color);
+        }
+
+        .features-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .feature-box {
+            border: 2px solid var(--secondary-color);
+            padding: 40px;
+            text-align: left;
+        }
+
+        .feature-header {
+            font-size: 1.2em;
+            font-weight: bold;
             letter-spacing: 3px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--secondary-color);
             color: var(--secondary-color);
         }
 
+        .feature-content {
+            font-size: 0.95em;
+            line-height: 2;
+            color: var(--secondary-color);
+            opacity: 0.8;
+        }
+
+        .feature-content p {
+            margin-bottom: 20px;
+        }
+
+        .feature-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .feature-list li {
+            padding: 8px 0;
+            position: relative;
+            padding-left: 20px;
+        }
+
+        .feature-list li::before {
+            content: "▸";
+            position: absolute;
+            left: 0;
+            color: var(--accent-color);
+        }
+
+        .download-action {
+            border: 2px solid var(--secondary-color);
+        }
+
+        .download-button-wrapper {
+            padding: 40px;
+            text-align: center;
+            display: block;
+        }
+
         .download-button {
-            display: inline-block;
-            padding: 25px 80px;
-            font-size: 1.5em;
+            padding: 20px 60px;
+            font-size: 1.2em;
             font-weight: bold;
-            letter-spacing: 2px;
+            letter-spacing: 3px;
             background: var(--secondary-color);
             color: var(--primary-color);
-            border: 3px solid var(--secondary-color);
+            border: 2px solid var(--secondary-color);
             cursor: pointer;
-            text-decoration: none;
             transition: all 0.3s;
+            display: inline-block;
         }
 
-        .download-button:hover {
+        .download-button:hover:not(:disabled) {
             background: var(--accent-color);
             border-color: var(--accent-color);
-            transform: scale(1.05);
-        }
-
-        .download-button:active {
-            transform: scale(0.98);
+            color: var(--primary-color);
         }
 
         .download-button:disabled {
-            opacity: 0.6;
+            opacity: 0.5;
             cursor: not-allowed;
         }
 
         .download-status {
             margin-top: 20px;
-            font-size: 1.2em;
+            font-size: 1em;
+            letter-spacing: 2px;
             color: var(--secondary-color);
             opacity: 0.8;
+            min-height: 0;
+        }
+
+        .download-status:empty {
+            margin-top: 0;
+            display: none;
+        }
+
+        @media (max-width: 1024px) {
+            .features-container {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
         }
     </style>
 </head>
@@ -66,14 +148,62 @@
         <!-- Navigation -->
         <div id="navigation-container"></div>
 
-        <div class="download-container">
-            <h1 class="download-title">STAR TRACKER</h1>
+        <div class="download-section">
+            <div class="section-header">
+                <h1 class="section-title">STAR CITIZEN TRACKER</h1>
+                <p class="section-subtitle">COMBAT ANALYTICS FOR STAR CITIZEN</p>
+            </div>
 
-            <button id="downloadButton" class="download-button">
-                DOWNLOAD
-            </button>
+            <div class="features-container">
+                <div class="feature-box">
+                    <div class="feature-header">HOW IT WORKS</div>
+                    <div class="feature-content">
+                        <p>Monitors Star Citizen's Game.log file for changes, providing real-time updates on player actions and events as an overlay. And Optionally uploads data to the database for stat tracking.</p>
+                        <ul class="feature-list">
+                            <li>Highly Customizable</li>
+                            <li>Tracks a variety of console outputs</li>
+                            <li>Positionable & customizable overlay</li>
+                            <li>Statistics tracking</li>
+                            <li>No-Overlay mode for database tracking only</li>
+                        </ul>
+                    </div>
+                </div>
 
-            <div id="downloadStatus" class="download-status"></div>
+                <div class="feature-box">
+                    <div class="feature-header">DETAILED STATISTICS</div>
+                    <div class="feature-content">
+                        <p>This translates a wide variety of console outputs into easily glanceable statistics.</p>
+                        <ul class="feature-list">
+                            <li>K/D Tracking</li>
+                            <li>Nearby Player deaths</li>
+                            <li>Nearby ship attacks</li>
+                            <li>Tracks weapon and damage types</li>
+                            <li>Killstreak tracking</li>
+                            <li>Player performance metrics</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="feature-box">
+                    <div class="feature-header">STREAMER READY</div>
+                    <div class="feature-content">
+                        <p>Built for content creators with OBS Browser integration and customizable overlays. You can alternatively also use your own tracker and leave this as background tracking for the database.</p>
+                        <ul class="feature-list">
+                            <li>OBS browser source support</li>
+                            <li>No-Overlay mode for database tracking only</li>
+                            <li>Customizable Tracking Metrics</li>
+                            <li>Hosted locally</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="download-action">
+                <div class="download-button-wrapper">
+                    <button id="downloadButton" class="download-button">DOWNLOAD</button>
+                    <div id="downloadStatus" class="download-status"></div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -81,42 +211,115 @@
     <script src="../utils/security.js"></script>
     <!-- Load API configuration -->
     <script src="../config/api.js"></script>
-    <!-- Load components -->
-    <script src="../components.js"></script>
+    <!-- Load color config -->
     <script src="../color-config.js"></script>
     <script>
-        // Initialize navigation
+        // Simple navigation generator for download page
+        function generateNavigation() {
+            return `
+                <nav class="top-nav">
+                    <div class="nav-logo">
+                        <img src="../Assets/logo.png" alt="Star Tracker" class="logo-image">
+                        <span class="logo-text">STAR TRACKER</span>
+                    </div>
+                    
+                    <div class="nav-actions">
+                        <button class="btn btn-icon btn-text" onclick="window.location.href='../leaderboard.html'" title="Leaderboard">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M3 3v18h18"></path>
+                                <path d="M7 16h3v4H7z"></path>
+                                <path d="M14 8h3v12h-3z"></path>
+                                <path d="M7 11h3v2H7z"></path>
+                            </svg>
+                            <span>LEADERBOARD</span>
+                        </button>
+                        
+                        <button class="btn btn-icon" id="darkModeToggle" title="Toggle Dark Mode">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="5"></circle>
+                                <line x1="12" y1="1" x2="12" y2="3"></line>
+                                <line x1="12" y1="21" x2="12" y2="23"></line>
+                                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                                <line x1="1" y1="12" x2="3" y2="12"></line>
+                                <line x1="21" y1="12" x2="23" y2="12"></line>
+                                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                            </svg>
+                        </button>
+                        
+                        <button class="btn btn-icon" onclick="window.location.href='../login.html'" title="Login">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+                                <polyline points="10 17 15 12 10 7"></polyline>
+                                <line x1="15" y1="12" x2="3" y2="12"></line>
+                            </svg>
+                        </button>
+                    </div>
+                </nav>
+            `;
+        }
+        
+        // Initialize navigation and theme
         document.addEventListener('DOMContentLoaded', () => {
-            document.getElementById('navigation-container').innerHTML = generateNavigation({
-                showThemeToggle: true,
-                showUserMenu: false,
-                activePage: 'download'
-            });
+            console.log('Page loaded');
+            
+            // Render navigation
+            document.getElementById('navigation-container').innerHTML = generateNavigation();
+            
+            // Initialize theme
+            const isDarkMode = localStorage.getItem('darkMode') !== 'false';
+            document.body.classList.toggle('dark-mode', isDarkMode);
+            document.body.classList.toggle('light-mode', !isDarkMode);
+            
+            // Setup theme toggle
+            const darkModeToggle = document.getElementById('darkModeToggle');
+            if (darkModeToggle) {
+                darkModeToggle.addEventListener('click', () => {
+                    const isDark = document.body.classList.toggle('dark-mode');
+                    document.body.classList.toggle('light-mode', !isDark);
+                    localStorage.setItem('darkMode', isDark);
+                });
+            }
 
             // Setup download button
-            document.getElementById('downloadButton').addEventListener('click', downloadFromAzure);
+            const downloadButton = document.getElementById('downloadButton');
+            console.log('Download button found:', downloadButton);
+            
+            if (downloadButton) {
+                downloadButton.addEventListener('click', () => {
+                    console.log('Download button clicked');
+                    downloadFromAzure();
+                });
+            }
         });
 
         async function downloadFromAzure() {
+            console.log('downloadFromAzure function called');
+            
             const button = document.getElementById('downloadButton');
             const status = document.getElementById('downloadStatus');
 
             try {
                 button.disabled = true;
                 status.textContent = 'Preparing download...';
+                console.log('Starting download...');
 
                 // Download through API endpoint
                 const apiUrl = `${API_CONFIG.BASE_URL}/api/update/download`;
+                console.log('API URL:', apiUrl);
                 
                 status.textContent = 'Downloading...';
                 
                 const response = await fetch(apiUrl);
+                console.log('Response received:', response.status);
                 
                 if (!response.ok) {
-                    throw new Error('Download failed');
+                    throw new Error(`Download failed with status: ${response.status}`);
                 }
 
                 const blob = await response.blob();
+                console.log('Blob received, size:', blob.size);
                 
                 // Create download link
                 const url = window.URL.createObjectURL(blob);
@@ -125,6 +328,7 @@
                 a.download = 'StarCitizenTracker.zip';
                 document.body.appendChild(a);
                 a.click();
+                console.log('Download triggered');
                 
                 // Cleanup
                 window.URL.revokeObjectURL(url);
@@ -139,7 +343,7 @@
                 
             } catch (error) {
                 console.error('Download error:', error);
-                status.textContent = 'Download failed. Please try again.';
+                status.textContent = `Download failed: ${error.message}`;
                 button.disabled = false;
             }
         }
