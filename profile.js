@@ -223,7 +223,9 @@ async function loadProfileData(username) {
         const killsResponse = await fetch(getApiUrl(API_CONFIG.ENDPOINTS.PROFILES + '/' + profileData.userId + '/activity'));
         
         if (killsResponse.ok) {
-            allKills = await killsResponse.json();
+            const activityData = await killsResponse.json();
+            // Check if response has kills property (paginated) or is a direct array
+            allKills = activityData.kills || activityData;
         } else {
             allKills = [];
         }
