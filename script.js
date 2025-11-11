@@ -106,18 +106,33 @@ async function loadData() {
 }
 
 function updateStats() {
-    document.getElementById('stat-kills').textContent = myKills.length;
-    document.getElementById('stat-deaths').textContent = myDeaths.length;
-    const ratio = myDeaths.length === 0 ? myKills.length : (myKills.length / myDeaths.length);
+    // Apply current filters to myKills and myDeaths for stat calculation
+    const filteredKills = myKills.filter(k => {
+        const killTypeMatch = !currentFilters.killType || 
+            (currentFilters.killType === 'player' && (k.isPlayer === true || k.isPlayer === 1)) ||
+            (currentFilters.killType === 'npc' && (k.isPlayer === false || k.isPlayer === 0));
+        return killTypeMatch;
+    });
+    
+    const filteredDeaths = myDeaths.filter(k => {
+        const killTypeMatch = !currentFilters.killType || 
+            (currentFilters.killType === 'player' && (k.isPlayer === true || k.isPlayer === 1)) ||
+            (currentFilters.killType === 'npc' && (k.isPlayer === false || k.isPlayer === 0));
+        return killTypeMatch;
+    });
+    
+    document.getElementById('stat-kills').textContent = filteredKills.length;
+    document.getElementById('stat-deaths').textContent = filteredDeaths.length;
+    const ratio = filteredDeaths.length === 0 ? filteredKills.length : (filteredKills.length / filteredDeaths.length);
     document.getElementById('stat-kd').textContent = ratio.toFixed(2);
     
     // Calculate best killstreak (kills within 30 seconds of each other)
     let bestStreak = 0;
     let currentStreak = 0;
     
-    if (myKills.length > 0) {
+    if (filteredKills.length > 0) {
         // Sort kills by time
-        const sortedKills = [...myKills].sort((a, b) => new Date(a.killTime) - new Date(b.killTime));
+        const sortedKills = [...filteredKills].sort((a, b) => new Date(a.killTime) - new Date(b.killTime));
         
         currentStreak = 1;
         bestStreak = 1;
@@ -140,7 +155,7 @@ function updateStats() {
     
     // Calculate most used weapon
     const weaponCounts = {};
-    myKills.forEach(k => {
+    filteredKills.forEach(k => {
         const weapon = k.weapon || 'Unknown';
         weaponCounts[weapon] = (weaponCounts[weapon] || 0) + 1;
     });
@@ -337,6 +352,9 @@ function applyFilters() {
             break;
     }
     
+    // Update stats based on current filters
+    updateStats();
+    
     displayAllKills(filtered);
 }
 
@@ -376,6 +394,9 @@ function applyFiltersGrouped(kills, groupBy, containerId) {
             filtered.sort((a, b) => a.victimUser.localeCompare(b.victimUser));
             break;
     }
+    
+    // Update stats based on current filters
+    updateStats();
     
     renderGroupedView(filtered, groupBy, containerId);
 }

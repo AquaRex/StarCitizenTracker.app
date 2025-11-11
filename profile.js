@@ -273,17 +273,32 @@ async function loadProfileData(username) {
 
 // Update statistics display
 function updateStats() {
-    const kills = profileData.totalKills || 0;
-    const deaths = profileData.totalDeaths || 0;
+    // Apply current filters to profileKills and profileDeaths for stat calculation
+    const filteredKills = profileKills.filter(k => {
+        const killTypeMatch = !currentFilters.killType || 
+            (currentFilters.killType === 'player' && (k.isPlayer === true || k.isPlayer === 1)) ||
+            (currentFilters.killType === 'npc' && (k.isPlayer === false || k.isPlayer === 0));
+        return killTypeMatch;
+    });
+    
+    const filteredDeaths = profileDeaths.filter(k => {
+        const killTypeMatch = !currentFilters.killType || 
+            (currentFilters.killType === 'player' && (k.isPlayer === true || k.isPlayer === 1)) ||
+            (currentFilters.killType === 'npc' && (k.isPlayer === false || k.isPlayer === 0));
+        return killTypeMatch;
+    });
+    
+    const kills = filteredKills.length;
+    const deaths = filteredDeaths.length;
     const kdRatio = deaths > 0 ? (kills / deaths).toFixed(2) : kills.toFixed(2);
     
     // Calculate killstreak (kills within 30 seconds)
     let bestStreak = 0;
     let currentStreak = 0;
     
-    if (profileKills.length > 0) {
+    if (filteredKills.length > 0) {
         // Sort kills by time to calculate streaks
-        const sortedKills = [...profileKills].sort((a, b) => new Date(a.killTime) - new Date(b.killTime));
+        const sortedKills = [...filteredKills].sort((a, b) => new Date(a.killTime) - new Date(b.killTime));
         
         currentStreak = 1;
         bestStreak = 1;
@@ -304,7 +319,7 @@ function updateStats() {
     
     // Calculate most used weapon from actual kills
     const weaponCounts = {};
-    profileKills.forEach(k => {
+    filteredKills.forEach(k => {
         const weapon = k.weapon || 'Unknown';
         weaponCounts[weapon] = (weaponCounts[weapon] || 0) + 1;
     });
@@ -711,6 +726,9 @@ function renderView() {
     
     const filteredData = applyFilters(dataToShow);
     const sortedData = sortKills(filteredData);
+    
+    // Update stats based on current filters
+    updateStats();
     
     const element = document.getElementById(targetElement);
     
