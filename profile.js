@@ -12,7 +12,7 @@ let PROFILE_PLAYER_NAME = '';
 let currentFilters = {
     weapon: '',
     zone: '',
-    killType: '',
+    killType: localStorage.getItem('killTypeFilter') || 'player',
     sort: 'date-desc',
     search: ''
 };
@@ -238,6 +238,18 @@ async function loadProfileData(username) {
         updateStats();
         populateFilters();
         initFilters();
+        
+        // Set the kill type filter UI to match the default
+        const killTypeFilterText = document.getElementById('killTypeFilterText');
+        if (killTypeFilterText) {
+            if (currentFilters.killType === 'player') {
+                killTypeFilterText.textContent = 'PLAYER KILLS';
+            } else if (currentFilters.killType === 'npc') {
+                killTypeFilterText.textContent = 'NPC KILLS';
+            } else {
+                killTypeFilterText.textContent = 'ALL KILLS';
+            }
+        }
         
         // Show initial view
         switchView('all');
@@ -523,6 +535,12 @@ function selectOption(dropdownId, value, text) {
         currentFilters.zone = value;
     } else if (dropdownId === 'killTypeFilter') {
         currentFilters.killType = value;
+        // Save kill type preference
+        if (value) {
+            localStorage.setItem('killTypeFilter', value);
+        } else {
+            localStorage.removeItem('killTypeFilter');
+        }
     } else if (dropdownId === 'sortOption') {
         currentFilters.sort = value;
     }
@@ -535,7 +553,7 @@ function resetFilters() {
     currentFilters = {
         weapon: '',
         zone: '',
-        killType: '',
+        killType: 'player',
         sort: 'date-desc',
         search: ''
     };
@@ -543,9 +561,12 @@ function resetFilters() {
     // Reset UI
     document.getElementById('weaponFilterText').textContent = 'ALL WEAPONS';
     document.getElementById('zoneFilterText').textContent = 'ALL ZONES';
-    document.getElementById('killTypeFilterText').textContent = 'ALL KILLS';
+    document.getElementById('killTypeFilterText').textContent = 'PLAYER KILLS';
     document.getElementById('sortOptionText').textContent = 'NEWEST FIRST';
     document.getElementById('searchInput').value = '';
+    
+    // Save the reset preference
+    localStorage.setItem('killTypeFilter', 'player');
     
     renderView();
 }

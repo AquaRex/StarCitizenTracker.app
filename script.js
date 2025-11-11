@@ -9,7 +9,7 @@ let currentView = 'all';
 let currentFilters = {
     weapon: '',
     zone: '',
-    killType: '',
+    killType: localStorage.getItem('killTypeFilter') || 'player',
     sort: 'date-desc',
     search: ''
 };
@@ -92,6 +92,19 @@ async function loadData() {
         
         updateStats();
         populateFilters();
+        
+        // Set the kill type filter UI to match the default
+        const killTypeFilterText = document.getElementById('killTypeFilterText');
+        if (killTypeFilterText) {
+            if (currentFilters.killType === 'player') {
+                killTypeFilterText.textContent = 'PLAYER KILLS';
+            } else if (currentFilters.killType === 'npc') {
+                killTypeFilterText.textContent = 'NPC KILLS';
+            } else {
+                killTypeFilterText.textContent = 'ALL KILLS';
+            }
+        }
+        
         renderView();
         
     } catch (error) {
@@ -277,6 +290,12 @@ function selectOption(filterId, value, displayText) {
         currentFilters.zone = parsedValue;
     } else if (filterId === 'killTypeFilter') {
         currentFilters.killType = parsedValue;
+        // Save kill type preference
+        if (parsedValue) {
+            localStorage.setItem('killTypeFilter', parsedValue);
+        } else {
+            localStorage.removeItem('killTypeFilter');
+        }
     } else if (filterId === 'sortOption') {
         currentFilters.sort = parsedValue;
     }
@@ -406,16 +425,19 @@ function resetFilters() {
     currentFilters = {
         weapon: '',
         zone: '',
-        killType: '',
+        killType: 'player',
         sort: 'date-desc',
         search: ''
     };
     
     document.getElementById('weaponFilterText').textContent = 'ALL WEAPONS';
     document.getElementById('zoneFilterText').textContent = 'ALL ZONES';
-    document.getElementById('killTypeFilterText').textContent = 'ALL KILLS';
+    document.getElementById('killTypeFilterText').textContent = 'PLAYER KILLS';
     document.getElementById('sortOptionText').textContent = 'NEWEST FIRST';
     document.getElementById('searchInput').value = '';
+    
+    // Save the reset preference
+    localStorage.setItem('killTypeFilter', 'player');
     
     renderView();
 }
